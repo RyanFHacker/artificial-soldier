@@ -27,8 +27,8 @@ tables = new Collection();
 
 const commandsPath = path.join(__dirname, 'commands');
 const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
-const tablesPath = path.join(__dirname, 'tables');
-const tablesFiles = fs.readdirSync(tablesPath).filter(file => file.endsWith('.js'));
+// const tablesPath = path.join(__dirname, 'tables');
+// const tablesFiles = fs.readdirSync(tablesPath).filter(file => file.endsWith('.js'));
 
 for (const file of commandFiles) {
 	const filePath = path.join(commandsPath, file);
@@ -41,16 +41,16 @@ for (const file of commandFiles) {
 	}
 }
 
-for (const file of tablesFiles) {
-	const filePath = path.join(tablesPath, file);
-	const table = require(filePath);
-	// Set a new item in the Collection with the key as the command name and the value as the exported module
-	if ('data' in table && 'execute' in table) {
-		client.tables.set(table.data.name, table);
-	} else {
-		console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
-	}
-}
+// for (const file of tablesFiles) {
+// 	const filePath = path.join(tablesPath, file);
+// 	const table = require(filePath);
+// 	// Set a new item in the Collection with the key as the command name and the value as the exported module
+// 	if ('data' in table && 'execute' in table) {
+// 		client.tables.set(table.data.name, table);
+// 	} else {
+// 		console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
+// 	}
+// }
 
 client.once(Events.ClientReady, () => {
 	sequelize.sync()

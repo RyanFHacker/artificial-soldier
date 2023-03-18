@@ -28,9 +28,6 @@ const Subjects = sequelize.define('Subjects', {
 
 });
 
-// Matches.sync();
-// Subjects.sync();
-
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('research')

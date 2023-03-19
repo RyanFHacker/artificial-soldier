@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, moveElementInArray } = require('discord.js');
+const { SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, moveElementInArray, PermissionFlagsBits } = require('discord.js');
 const { v4: uuidv4 } = require('uuid');
 
 const Sequelize = require('sequelize');
@@ -20,14 +20,6 @@ const Matches = sequelize.define('matches', {
 	confirmed: Sequelize.DataTypes.BOOLEAN
 });
 
-const Subjects = sequelize.define('Subjects', {
-	subject_id: Sequelize.STRING,
-	research_points: Sequelize.INTEGER,
-	rank: Sequelize.INTEGER,
-	
-
-});
-
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('research')
@@ -45,7 +37,8 @@ module.exports = {
                 .addChoices(
                     {name: '2-0', value: '2-0'},
                     {name: '2-1', value: '2-1'},
-            )),
+            ))
+		.setDefaultMemberPermissions(PermissionFlagsBits.ViewChannel),
 	async execute(interaction) {
 		const row = new ActionRowBuilder()
 		.addComponents(
@@ -54,7 +47,6 @@ module.exports = {
 				.setLabel('Confirm')
 				.setStyle(ButtonStyle.Success),
 		);
-
 		// Don't allow a user to enter themselves
 		if (interaction.user != interaction.options.getUser('opponent')) {
 			const duplicateMatchToday = await Matches.findOne({ where: 

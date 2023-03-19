@@ -6,13 +6,14 @@ const Sequelize = require('sequelize');
 const { Client, GatewayIntentBits, Collection, Events, IntentsBitField } = require('discord.js');
 
 const client = new Client({
-  intents: [
-    GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.MessageContent,
-    IntentsBitField.Flags.Guilds,
-  ]
-});
+	intents: [
+	  GatewayIntentBits.Guilds,
+	  GatewayIntentBits.GuildMessages,
+	  GatewayIntentBits.MessageContent,
+	  IntentsBitField.Flags.Guilds,
+	  GatewayIntentBits.GuildMembers
+	]
+  });
 
 const sequelize = new Sequelize('database', 'user', 'password', {
 	host: 'localhost',
@@ -22,13 +23,30 @@ const sequelize = new Sequelize('database', 'user', 'password', {
 	storage: 'database.sqlite',
 });
 
+const Matches = sequelize.define('matches', {
+	match_id: Sequelize.STRING,
+	results: Sequelize.TEXT,
+	player0_id: Sequelize.DataTypes.STRING,
+	player1_id: Sequelize.DataTypes.STRING,
+	confirmed: Sequelize.DataTypes.BOOLEAN
+});
+
+const Subjects = sequelize.define('subjects', {
+	subject_id: Sequelize.STRING,
+	research_points: Sequelize.INTEGER,
+	rank: Sequelize.INTEGER,
+});
+
+const Channels = sequelize.define('channels', {
+	channel_id: Sequelize.INTEGER,
+
+})
+
 client.commands = new Collection();
 tables = new Collection();
 
 const commandsPath = path.join(__dirname, 'commands');
 const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
-// const tablesPath = path.join(__dirname, 'tables');
-// const tablesFiles = fs.readdirSync(tablesPath).filter(file => file.endsWith('.js'));
 
 for (const file of commandFiles) {
 	const filePath = path.join(commandsPath, file);
@@ -41,24 +59,16 @@ for (const file of commandFiles) {
 	}
 }
 
-// for (const file of tablesFiles) {
-// 	const filePath = path.join(tablesPath, file);
-// 	const table = require(filePath);
-// 	// Set a new item in the Collection with the key as the command name and the value as the exported module
-// 	if ('data' in table && 'execute' in table) {
-// 		client.tables.set(table.data.name, table);
-// 	} else {
-// 		console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
-// 	}
-// }
-
 client.once(Events.ClientReady, () => {
 	sequelize.sync()
 	console.log(`Logged in as ${client.user.tag}!`);
 });
 
 client.on(Events.InteractionCreate, async interaction => {
+	// let channel_id = "1064588759250784256"
+	let channel_id = "874688076398624808"
 	if (!interaction.isChatInputCommand()) return;
+	if (interaction.channelId != channel_id) return;
 
 	const command = interaction.client.commands.get(interaction.commandName);
 

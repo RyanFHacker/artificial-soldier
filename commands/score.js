@@ -1,11 +1,7 @@
-const { SlashCommandBuilder, Client, GatewayIntentBits } = require('discord.js');
+const config = require("../config.json");
 
-const client = new Client({
-	intents: [
-	  GatewayIntentBits.Guilds,
-	  GatewayIntentBits.GuildMembers,
-	]
-  });
+
+const { SlashCommandBuilder, Client, GatewayIntentBits } = require('discord.js');
 
 const Sequelize = require('sequelize');
 
@@ -18,7 +14,10 @@ const sequelize = new Sequelize('database', 'user', 'password', {
 });
 
 const Subjects = sequelize.define('subjects', {
-	subject_id: Sequelize.STRING,
+	subject_id: {
+		type: Sequelize.STRING,
+		primaryKey: true
+	},
 	research_points: Sequelize.INTEGER,
 	rank: Sequelize.INTEGER,
 });
@@ -30,16 +29,12 @@ module.exports = {
 	async execute(interaction) {
 		// Get a list of all subjects by score
 		const scores = await Subjects.findAll({attributes: ['subject_id', 'research_points']})
-		// let guild = client.guilds.cache.get('177525959010942976')
-		// let member = guild.members.cache.get('384240981521858561')
-		// guild.members.fetch()
-		// client.guilds.cache.get
-		// client.members.cache.get(384240981521858561)
 		let scoreBoard = ''
 		var i = 0
 		while (i < scores.length) {
-			// let subjectUser = client.members.cache.get(scores[i].subject_id)
-			scoreBoard += `${scores[i].subject_id}${scores[i].research_points}\n`
+			let userId = scores[i].subject_id
+			let fetchUser = await interaction.client.users.fetch(userId)
+			scoreBoard += `${fetchUser}${scores[i].research_points}\n`
 			i++
 		}
 		await interaction.reply({content: scoreBoard, ephmeral: true});

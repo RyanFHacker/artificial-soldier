@@ -13,11 +13,23 @@ const sequelize = new Sequelize('database', 'user', 'password', {
 });
 
 const Matches = sequelize.define('matches', {
-	match_id: Sequelize.STRING,
+	match_id: {
+		type: Sequelize.STRING,
+		primaryKey: true
+	},
 	results: Sequelize.TEXT,
 	player0_id: Sequelize.DataTypes.STRING,
 	player1_id: Sequelize.DataTypes.STRING,
 	confirmed: Sequelize.DataTypes.BOOLEAN
+});
+
+const Subjects = sequelize.define('subjects', {
+	subject_id: {
+		type: Sequelize.STRING,
+		primaryKey: true
+	},
+	research_points: Sequelize.INTEGER,
+	rank: Sequelize.INTEGER,
 });
 
 module.exports = {
@@ -35,8 +47,9 @@ module.exports = {
                 .setDescription('Results of the research match')
                 .setRequired(true)
                 .addChoices(
-                    {name: '2-0', value: '2-0'},
-                    {name: '2-1', value: '2-1'},
+                    {name: '3-0', value: '3-0'},
+                    {name: '3-1', value: '3-1'},
+					{name: '3-2', value: '3-2'},
             ))
 		.setDefaultMemberPermissions(PermissionFlagsBits.ViewChannel),
 	async execute(interaction) {
@@ -47,38 +60,63 @@ module.exports = {
 				.setLabel('Confirm')
 				.setStyle(ButtonStyle.Success),
 		);
-		// Don't allow a user to enter themselves
-		if (interaction.user != interaction.options.getUser('opponent')) {
-			const duplicateMatchToday = await Matches.findOne({ where: 
-				{ player0_id: {[Sequelize.Op.or]: [interaction.user.id, interaction.options.getUser('opponent').id]}, player1_id: {[Sequelize.Op.or]: [interaction.user.id, interaction.options.getUser('opponent').id]}, createdAt: {[Sequelize.Op.gt]: new Date(new Date() - 24 * 60 * 60 * 1000)}} });
-			if (!duplicateMatchToday) {
-				const match_id = uuidv4();
-				const match = await Matches.create({
-					match_id: match_id,
-					results:interaction.options.getString('results'),
-					player0_id: interaction.user.id,
-					player1_id: interaction.options.getUser('opponent').id,
-					confirmed: false
-				});
-	
-				await interaction.reply({ content: `Match between ${interaction.user} and ${interaction.options.getUser('opponent')} added with the result of ${interaction.options.getString('results')}.`, components: [row]});
-	
-				const filter = i => i.customId === 'confirm' && i.user.id === interaction.options.getUser('opponent').id;
-				const collector = interaction.channel.createMessageComponentCollector({filter});
+		const player0_id = interaction.user.id
+		const player1_id = interaction.options.getUser('opponent').id
+		const getWinningSubject = await Subjects.findOne({ where: { subject_id: player0_id} })
+		const getLosingSubject = await Subjects.findOne({ where: { subject_id: player1_id} })
+		// Verify both subjects are registered
+		if (getWinningSubject && getLosingSubject) {
+			// Don't allow a user to enter themselves
+			if (interaction.user != interaction.options.getUser('opponent')) {
+				const duplicateMatchToday = await Matches.findOne({ where: 
+					{ player0_id: {[Sequelize.Op.or]: [player0_id, player1_id]}, player1_id: {[Sequelize.Op.or]: [player0_id, player1_id]}, createdAt: {[Sequelize.Op.gt]: new Date(new Date() - 24 * 60 * 60 * 1000)}} });
+				if (!duplicateMatchToday) {
+					const match_id = uuidv4();
+					Matches.create({
+						match_id: match_id,
+						results:interaction.options.getString('results'),
+						player0_id: player0_id,
+						player1_id: player1_id,
+						confirmed: false
+					});
 		
-				collector.on('collect', async i => {
-					// update match as confirmed
-					const getMatch = await Matches.findOne({ where: { match_id: match_id} });
-					if (getMatch) {
-						getMatch.update({confirmed: true})
-						await i.update({ content: `Confirmed ${match}`, components: [] });
-					}
-				});
-			} else {
-				await interaction.reply({content: `This appears to be a duplicate match`})
-			}
-			}else {
-				await interaction.reply({content: `You can't claim a match against yourself`})
-			}
+					await interaction.reply({ content: `Match between ${interaction.user} and ${interaction.options.getUser('opponent')} added with the result of ${interaction.options.getString('results')}.`, components: [row]});
+		
+					const filter = i => i.customId === 'confirm' && i.user.id === interaction.options.getUser('opponent').id;
+					const collector = interaction.channel.createMessageComponentCollector({filter});
+			
+					collector.on('collect', async i => {
+						// update match as confirmed
+						const getMatch = await Matches.findOne({ where: { match_id: match_id} });
+						if (getMatch) {
+							getMatch.update({confirmed: true})
+							switch (getMatch.results) {
+								case '3-0':
+									getWinningSubject.update({research_points: (getWinningSubject.research_points + 20)})
+									getLosingSubject.update({research_points: (getLosingSubject.research_points + 5)})
+									break;
+								case '3-1':
+									getWinningSubject.update({research_points: (getWinningSubject.research_points + 20)})
+									getLosingSubject.update({research_points: (getLosingSubject.research_points + 10)})
+									break;
+								case '3-2':
+									getWinningSubject.update({research_points: (getWinningSubject.research_points + 20)})
+									getLosingSubject.update({research_points: (getLosingSubject.research_points + 15)})
+									break;
+							}
+							await i.update({ content: `Confirmed ${interaction.user} ${getMatch.results} ${ interaction.options.getUser('opponent')}`, components: [] });
+						}
+					});
+				} else {
+					await interaction.reply({content: `This appears to be a duplicate match`})
+				}
+				} else {
+					await interaction.reply({content: `You can't claim a match against yourself`})
+				}
+		} else if (!getWinningSubject) {
+			await interaction.reply({content: `You are not registered, please do so with the /register command`})
+		} else if (!getLosingSubject) {
+			await interaction.reply({content: `Your opponent is not registered, please have them do so with the /register command`})
+		}
 	}
 };

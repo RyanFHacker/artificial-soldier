@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, PermissionFlagsBits, ActionRowBuilder, ButtonBuilder, ButtonStyle} = require('discord.js');
+const { SlashCommandBuilder, PermissionFlagsBits, ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder} = require('discord.js');
 
 const Sequelize = require('sequelize');
 
@@ -11,7 +11,10 @@ const sequelize = new Sequelize('database', 'user', 'password', {
 });
 
 const Subjects = sequelize.define('subjects', {
-	subject_id: Sequelize.STRING,
+    subject_id: {
+		type: Sequelize.STRING,
+		primaryKey: true
+	},
 	research_points: Sequelize.INTEGER,
 	rank: Sequelize.INTEGER,
 });
@@ -29,17 +32,23 @@ module.exports = {
                 .setLabel('Confirm')
                 .setStyle(ButtonStyle.Success),
         );
+
+        const subject_id = interaction.user.id
+        const embed = new EmbedBuilder()
+            .setTitle('Registration')
+            .setColor('#C69B6D');
         //check if current user is in the subject list
-        const getSubject = await Subjects.findOne({ where: { subject_id: interaction.user.id} });
+        const getSubject = await Subjects.findOne({ where: { subject_id: subject_id} });
             if (!getSubject) {
                 await interaction.reply({ content: `Confirm you read the rules you liar.`, components: [row]});
                 const filter = i => i.customId === 'confirm';
                 const collector = interaction.channel.createMessageComponentCollector({filter});
                 collector.on('collect', async i => {
-                    const subject = await Subjects.create({
-                        subject_id: interaction.user.id
+                    await Subjects.create({
+                        subject_id: subject_id,
+                        research_points: 0
                     });
-                    await i.update({ content: `Registered ${interaction.user}`, components: [] });
+                    await i.update({ content: `Registered ${interaction.user}`, components: [], embeds: [embed] });
                 });
             } else {
                 await interaction.reply({ content: `User is already registered!`});

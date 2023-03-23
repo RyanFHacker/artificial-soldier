@@ -24,7 +24,10 @@ const sequelize = new Sequelize('database', 'user', 'password', {
 });
 
 const Matches = sequelize.define('matches', {
-	match_id: Sequelize.STRING,
+	match_id: {
+		type: Sequelize.STRING,
+		primaryKey: true
+	},
 	results: Sequelize.TEXT,
 	player0_id: Sequelize.DataTypes.STRING,
 	player1_id: Sequelize.DataTypes.STRING,
@@ -32,7 +35,10 @@ const Matches = sequelize.define('matches', {
 });
 
 const Subjects = sequelize.define('subjects', {
-	subject_id: Sequelize.STRING,
+	subject_id: {
+		type: Sequelize.STRING,
+		primaryKey: true
+	},
 	research_points: Sequelize.INTEGER,
 	rank: Sequelize.INTEGER,
 });

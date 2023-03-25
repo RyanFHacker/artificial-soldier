@@ -30,6 +30,8 @@ const Subjects = sequelize.define('subjects', {
 	},
 	research_points: Sequelize.INTEGER,
 	rank: Sequelize.INTEGER,
+	confirmed: Sequelize.DataTypes.BOOLEAN,
+
 });
 
 module.exports = {
@@ -71,6 +73,39 @@ module.exports = {
 				const duplicateMatchToday = await Matches.findOne({ where: 
 					{ player0_id: {[Sequelize.Op.or]: [player0_id, player1_id]}, player1_id: {[Sequelize.Op.or]: [player0_id, player1_id]}, createdAt: {[Sequelize.Op.gt]: new Date(new Date() - 24 * 60 * 60 * 1000)}} });
 				if (!duplicateMatchToday) {
+					// check bounty, so if player 1 has a rank, give extra
+					let bounty = 0
+					if (getWinningSubject.rank > getLosingSubject.rank) {
+						switch (getLosingSubject.rank) {
+							case 1:
+								bounty = 30
+								break;
+							case 2:
+								bounty = 25
+								break;
+							case 3:
+								bounty = 20
+								break;
+							case 4:
+								bounty = 15
+								break;
+							case 5:
+								bounty = 10
+								break;
+							case 6:
+								bounty = 10
+								break;
+							case 7:
+								bounty = 5
+								break;
+							case 8:
+								bounty = 5
+								break;
+							case null:
+								break;
+						}
+					}
+
 					const match_id = uuidv4();
 					Matches.create({
 						match_id: match_id,
@@ -92,15 +127,15 @@ module.exports = {
 							getMatch.update({confirmed: true})
 							switch (getMatch.results) {
 								case '3-0':
-									getWinningSubject.update({research_points: (getWinningSubject.research_points + 20)})
+									getWinningSubject.update({research_points: (getWinningSubject.research_points + bounty + 20)})
 									getLosingSubject.update({research_points: (getLosingSubject.research_points + 5)})
 									break;
 								case '3-1':
-									getWinningSubject.update({research_points: (getWinningSubject.research_points + 20)})
+									getWinningSubject.update({research_points: (getWinningSubject.research_points + bounty + 20)})
 									getLosingSubject.update({research_points: (getLosingSubject.research_points + 10)})
 									break;
 								case '3-2':
-									getWinningSubject.update({research_points: (getWinningSubject.research_points + 20)})
+									getWinningSubject.update({research_points: (getWinningSubject.research_points + bounty + 20)})
 									getLosingSubject.update({research_points: (getLosingSubject.research_points + 15)})
 									break;
 							}

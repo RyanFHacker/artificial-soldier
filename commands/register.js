@@ -17,6 +17,7 @@ const Subjects = sequelize.define('subjects', {
 	},
 	research_points: Sequelize.INTEGER,
 	rank: Sequelize.INTEGER,
+    confirmed: Sequelize.DataTypes.BOOLEAN,
 });
 
 module.exports = {
@@ -34,24 +35,22 @@ module.exports = {
         );
 
         const subject_id = interaction.user.id
-        const embed = new EmbedBuilder()
-            .setTitle('Registration')
-            .setColor('#C69B6D');
-        //check if current user is in the subject list
         const getSubject = await Subjects.findOne({ where: { subject_id: subject_id} });
             if (!getSubject) {
-                await interaction.reply({ content: `Confirm you read the rules you liar.`, components: [row]});
-                const filter = i => i.customId === 'confirm';
-                const collector = interaction.channel.createMessageComponentCollector({filter});
-                collector.on('collect', async i => {
-                    await Subjects.create({
-                        subject_id: subject_id,
-                        research_points: 0
-                    });
-                    await i.update({ content: `Registered ${interaction.user}`, components: [], embeds: [embed] });
+                await Subjects.create({
+                    subject_id: subject_id,
+                    research_points: 0,
+                    confirmed: false
                 });
+                // await interaction.reply({ content: `Confirm you read the rules you liar.`, components: [row]});
+                // const filter = i => i.customId === 'confirm';
+                // const collector = interaction.channel.createMessageComponentCollector({filter});
+                // collector.on('collect', async i => {
+                    await interaction.reply({ content: `Registered ${interaction.user}`, components: []});
+                // });
             } else {
                 await interaction.reply({ content: `User is already registered!`});
+                
             }
 	},
 };

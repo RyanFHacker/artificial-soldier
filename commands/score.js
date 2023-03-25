@@ -20,6 +20,7 @@ const Subjects = sequelize.define('subjects', {
 	},
 	research_points: Sequelize.INTEGER,
 	rank: Sequelize.INTEGER,
+	confirmed: Sequelize.DataTypes.BOOLEAN,
 });
 
 module.exports = {
@@ -28,13 +29,18 @@ module.exports = {
 		.setDescription('Display scoreboard'),
 	async execute(interaction) {
 		// Get a list of all subjects by score
-		const scores = await Subjects.findAll({attributes: ['subject_id', 'research_points']})
+		const scores = await Subjects.findAll({ 
+			order: [
+				['research_points', 'DESC']],
+			attributes: [
+				'subject_id', 'research_points', 'rank']})
 		let scoreBoard = ''
 		var i = 0
 		while (i < scores.length) {
 			let userId = scores[i].subject_id
 			let fetchUser = await interaction.client.users.fetch(userId)
-			scoreBoard += `${fetchUser}${scores[i].research_points}\n`
+			let rank = scores[i].rank ? scores[i].rank : '   '
+			scoreBoard += `${rank}   ${fetchUser.username} - ${scores[i].research_points}\n`
 			i++
 		}
 		await interaction.reply({content: scoreBoard, ephmeral: true});

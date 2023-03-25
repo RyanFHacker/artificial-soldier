@@ -41,6 +41,8 @@ const Subjects = sequelize.define('subjects', {
 	},
 	research_points: Sequelize.INTEGER,
 	rank: Sequelize.INTEGER,
+	confirmed: Sequelize.DataTypes.BOOLEAN,
+
 });
 
 const Channels = sequelize.define('channels', {
@@ -71,8 +73,8 @@ client.once(Events.ClientReady, () => {
 });
 
 client.on(Events.InteractionCreate, async interaction => {
-	// let channel_id = "1064588759250784256"
-	let channel_id = "874688076398624808"
+	let channel_id = "1088474120376832111"
+
 	if (!interaction.isChatInputCommand()) return;
 	if (interaction.channelId != channel_id) return;
 

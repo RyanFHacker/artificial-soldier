@@ -73,10 +73,8 @@ client.once(Events.ClientReady, () => {
 });
 
 client.on(Events.InteractionCreate, async interaction => {
-	let channel_id = "1088474120376832111"
-
 	if (!interaction.isChatInputCommand()) return;
-	if (interaction.channelId != channel_id) return;
+	if (interaction.channelId != config.channelId) return;
 
 	const command = interaction.client.commands.get(interaction.commandName);
 

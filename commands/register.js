@@ -42,12 +42,7 @@ module.exports = {
                     research_points: 0,
                     confirmed: false
                 });
-                // await interaction.reply({ content: `Confirm you read the rules you liar.`, components: [row]});
-                // const filter = i => i.customId === 'confirm';
-                // const collector = interaction.channel.createMessageComponentCollector({filter});
-                // collector.on('collect', async i => {
-                    await interaction.reply({ content: `Registered ${interaction.user}`, components: []});
-                // });
+                await interaction.reply({ content: `Registered ${interaction.user}`, components: []});
             } else {
                 await interaction.reply({ content: `User is already registered!`});
                 

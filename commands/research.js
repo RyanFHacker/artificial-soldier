@@ -73,6 +73,9 @@ module.exports = {
 				const duplicateMatchToday = await Matches.findOne({ where: 
 					{ player0_id: {[Sequelize.Op.or]: [player0_id, player1_id]}, player1_id: {[Sequelize.Op.or]: [player0_id, player1_id]}, createdAt: {[Sequelize.Op.gt]: new Date(new Date() - 24 * 60 * 60 * 1000)}} });
 				if (!duplicateMatchToday) {
+					// only from 12 PM to 12 AM Wednesday
+					// var currentDateTime = new Date();
+					// if (currentDateTime.getDay() == 4 && )
 					// check bounty, so if player 1 has a rank, give extra
 					let bounty = 0
 					if (getWinningSubject.rank > getLosingSubject.rank) {

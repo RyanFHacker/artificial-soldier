@@ -1,4 +1,5 @@
-const { SlashCommandBuilder } = require('discord.js');
+const config = require("../config.json");
+const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 // Setup the top 8
 
 const {Sequelize, Op } = require('sequelize');
@@ -26,8 +27,10 @@ module.exports = {
 		.setName('rank')
 		.setDescription('Reset the list of the top ranked players in the combat experiment.'),
 	async execute(interaction) {
-		const dadminId = "384240981521858561"
-		if (interaction.user.id == dadminId) {
+		let rankList = new String();
+		let nameList = new String();
+		let pointsList = new String();
+		if (interaction.user.id == config.dadminId) {
 			await Subjects.update({ rank: undefined }, {
 				where: { subject_id: {[Op.not]: null }}
 			})
@@ -35,6 +38,7 @@ module.exports = {
 				['research_points', 'DESC'],
 			] });
 			let ranked = ''
+			const guild = await interaction.client.guilds.fetch(config.guildId)
 			var i = 0
 			while (i < getTopEight.length) {
 				let userId = getTopEight[i].subject_id
@@ -42,11 +46,22 @@ module.exports = {
 				await Subjects.update({ rank: rank }, {
 					where: { subject_id: userId }
 				});
-				let fetchUser = await interaction.client.users.fetch(userId)
-				ranked += `${rank} - ${fetchUser.username} - ${getTopEight[i].research_points}\n`
+				// let fetchUser = await interaction.client.users.fetch(userId)
+				const member = await guild.members.fetch(userId);
+				rankList += `${rank}\n`
+				nameList += `${member.nickname}\n`
+				pointsList += `${getTopEight[i].research_points}\n`
+				// ranked += `${rank} - ${fetchUser.username} - ${getTopEight[i].research_points}\n`
 				i++
 			}
-			await interaction.reply({content: ranked, ephmeral: true});
+			const scoreEmbed = new EmbedBuilder()
+				.setColor(0x6a5b8a)
+				.setTitle('New Ranks')
+				.addFields({ name: 'Rank', value: rankList, inline: true })
+				.addFields({ name: 'Name', value: nameList, inline: true })
+				.addFields({ name: 'Research Points', value: pointsList, inline: true })
+				
+			await interaction.reply({embeds: [scoreEmbed], ephmeral: true});
 		}
 	},
 };

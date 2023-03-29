@@ -26,14 +26,6 @@ module.exports = {
 		.setDescription('Add yourself to the Combat Research Institue roster.')
         .setDefaultMemberPermissions(PermissionFlagsBits.ViewChannel),
 	async execute(interaction) {
-        const row = new ActionRowBuilder()
-        .addComponents(
-            new ButtonBuilder()
-                .setCustomId('confirm')
-                .setLabel('Confirm')
-                .setStyle(ButtonStyle.Success),
-        );
-
         const subject_id = interaction.user.id
         const getSubject = await Subjects.findOne({ where: { subject_id: subject_id} });
             if (!getSubject) {

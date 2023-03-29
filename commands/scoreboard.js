@@ -1,6 +1,6 @@
 const config = require("../config.json");
 
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder } = require('discord.js');
 
 const Sequelize = require('sequelize');
 
@@ -32,18 +32,18 @@ module.exports = {
 			order: [
 				['research_points', 'DESC']],
 			attributes: [
-				'subject_id', 'research_points', 'rank']})
-		var i = 0
+				'subject_id', 'research_points', 'rank']
+			})
+		
 		const guild = await interaction.client.guilds.fetch(config.guildId)
 		let scoreboard = "```fix\nPOINTS  RANK  NAME\n"
-		
+		var i = 0
 		while (i < scores.length) {
 			let userId = scores[i].subject_id
 			const member = await guild.members.fetch(userId);
 			let score = ("    " + scores[i].research_points).slice(-4)
-			let rank = scores[i].rank ? ("     "+ scores[i].rank) : '    ';
+			let rank = scores[i].rank ? ("     " + scores[i].rank) : '    ';
 			let subject = ("    " + member.nickname)
-			// let subject = member.nickname
 			scoreboard+= `${score}${rank}${subject}\n`
 			i++
 		}

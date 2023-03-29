@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, moveElementInArray, PermissionFlagsBits } = require('discord.js');
+const { SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, PermissionFlagsBits } = require('discord.js');
 const { v4: uuidv4 } = require('uuid');
 
 const Sequelize = require('sequelize');
@@ -74,77 +74,86 @@ module.exports = {
 					{ player0_id: {[Sequelize.Op.or]: [player0_id, player1_id]}, player1_id: {[Sequelize.Op.or]: [player0_id, player1_id]}, createdAt: {[Sequelize.Op.gt]: new Date(new Date() - 24 * 60 * 60 * 1000)}} });
 				if (!duplicateMatchToday) {
 					// only from 12 PM to 12 AM Wednesday
-					// var currentDateTime = new Date();
-					// if (currentDateTime.getDay() == 4 && )
-					// check bounty, so if player 1 has a rank, give extra
-					let bounty = 0
-					if (getWinningSubject.rank > getLosingSubject.rank) {
-						switch (getLosingSubject.rank) {
-							case 1:
-								bounty = 30
-								break;
-							case 2:
-								bounty = 25
-								break;
-							case 3:
-								bounty = 20
-								break;
-							case 4:
-								bounty = 15
-								break;
-							case 5:
-								bounty = 10
-								break;
-							case 6:
-								bounty = 10
-								break;
-							case 7:
-								bounty = 5
-								break;
-							case 8:
-								bounty = 5
-								break;
-							case null:
-								break;
-						}
-					}
+					var noon = new Date()
+					var midnight = new Date();
+					var now = new Date()
 
-					const match_id = uuidv4();
-					Matches.create({
-						match_id: match_id,
-						results:interaction.options.getString('results'),
-						player0_id: player0_id,
-						player1_id: player1_id,
-						confirmed: false
-					});
-		
-					await interaction.reply({ content: `Match between ${interaction.user} and ${interaction.options.getUser('opponent')} added with the result of ${interaction.options.getString('results')}.`, components: [row]});
-		
-					const filter = i => i.customId === 'confirm' && i.user.id === interaction.options.getUser('opponent').id;
-					const collector = interaction.channel.createMessageComponentCollector({filter});
-			
-					collector.on('collect', async i => {
-						// update match as confirmed
-						const getMatch = await Matches.findOne({ where: { match_id: match_id} });
-						if (getMatch) {
-							getMatch.update({confirmed: true})
-							switch (getMatch.results) {
-								case '3-0':
-									getWinningSubject.update({research_points: (getWinningSubject.research_points + bounty + 20)})
-									getLosingSubject.update({research_points: (getLosingSubject.research_points + 5)})
+					noon.setHours(12,0,0,0);
+					midnight.setDate((midnight.getDate() + 1))
+					midnight.setHours(23,59,59,99)
+					if (now.getDay() === 3 && now >= noon && now <= midnight) {
+						// check bounty, so if player 1 has a rank, give extra
+						let bounty = 0
+						if (getWinningSubject.rank > getLosingSubject.rank) {
+							switch (getLosingSubject.rank) {
+								case 1:
+									bounty = 30
 									break;
-								case '3-1':
-									getWinningSubject.update({research_points: (getWinningSubject.research_points + bounty + 20)})
-									getLosingSubject.update({research_points: (getLosingSubject.research_points + 10)})
+								case 2:
+									bounty = 25
 									break;
-								case '3-2':
-									getWinningSubject.update({research_points: (getWinningSubject.research_points + bounty + 20)})
-									getLosingSubject.update({research_points: (getLosingSubject.research_points + 15)})
+								case 3:
+									bounty = 20
+									break;
+								case 4:
+									bounty = 15
+									break;
+								case 5:
+									bounty = 10
+									break;
+								case 6:
+									bounty = 10
+									break;
+								case 7:
+									bounty = 5
+									break;
+								case 8:
+									bounty = 5
+									break;
+								case null:
 									break;
 							}
-							await i.update({ content: `Confirmed ${interaction.user} ${getMatch.results} ${ interaction.options.getUser('opponent')}`, components: [] });
 						}
-					});
+
+						const match_id = uuidv4();
+						Matches.create({
+							match_id: match_id,
+							results:interaction.options.getString('results'),
+							player0_id: player0_id,
+							player1_id: player1_id,
+							confirmed: false
+						});
+			
+						await interaction.reply({ content: `Match between ${interaction.user} and ${interaction.options.getUser('opponent')} added with the result of ${interaction.options.getString('results')}.`, components: [row]});
+			
+						const filter = i => i.customId === 'confirm' && i.user.id === interaction.options.getUser('opponent').id;
+						const collector = interaction.channel.createMessageComponentCollector({filter});
+				
+						collector.on('collect', async i => {
+							// update match as confirmed
+							const getMatch = await Matches.findOne({ where: { match_id: match_id} });
+							if (getMatch) {
+								getMatch.update({confirmed: true})
+								switch (getMatch.results) {
+									case '3-0':
+										getWinningSubject.update({research_points: (getWinningSubject.research_points + bounty + 20)})
+										getLosingSubject.update({research_points: (getLosingSubject.research_points + 5)})
+										break;
+									case '3-1':
+										getWinningSubject.update({research_points: (getWinningSubject.research_points + bounty + 20)})
+										getLosingSubject.update({research_points: (getLosingSubject.research_points + 10)})
+										break;
+									case '3-2':
+										getWinningSubject.update({research_points: (getWinningSubject.research_points + bounty + 20)})
+										getLosingSubject.update({research_points: (getLosingSubject.research_points + 15)})
+										break;
+								}
+								await i.update({ content: `Confirmed ${interaction.user} ${getMatch.results} ${ interaction.options.getUser('opponent')}`, components: [] });
+							}
+						});
+					} else {
+						await interaction.reply({content: `You have attempted to submit a match outside of the desginated day or hours!`})
+					}
 				} else {
 					await interaction.reply({content: `This appears to be a duplicate match`})
 				}

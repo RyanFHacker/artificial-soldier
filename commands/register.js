@@ -26,6 +26,7 @@ module.exports = {
 		.setDescription('Add yourself to the Combat Research Institue roster.')
         .setDefaultMemberPermissions(PermissionFlagsBits.ViewChannel),
 	async execute(interaction) {
+        await interaction.deferReply({ ephemeral: true });
         const subject_id = interaction.user.id
         const getSubject = await Subjects.findOne({ where: { subject_id: subject_id} });
             if (!getSubject) {
@@ -34,10 +35,9 @@ module.exports = {
                     research_points: 0,
                     confirmed: false
                 });
-                await interaction.reply({ content: `Registered ${interaction.user}`, components: []});
+                await interaction.editReply({ content: `Registered ${interaction.user}`, components: []});
             } else {
-                await interaction.reply({ content: `User is already registered!`});
-                
+                await interaction.editReply({ content: `You appear to already be registered.`});
             }
 	},
 };

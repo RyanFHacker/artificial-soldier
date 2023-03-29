@@ -55,6 +55,7 @@ module.exports = {
             ))
 		.setDefaultMemberPermissions(PermissionFlagsBits.ViewChannel),
 	async execute(interaction) {
+		await interaction.deferReply();
 		const row = new ActionRowBuilder()
 		.addComponents(
 			new ButtonBuilder()
@@ -124,7 +125,7 @@ module.exports = {
 							confirmed: false
 						});
 			
-						await interaction.reply({ content: `Match between ${interaction.user} and ${interaction.options.getUser('opponent')} added with the result of ${interaction.options.getString('results')}.`, components: [row]});
+						await interaction.editReply({ content: `Match between ${interaction.user} and ${interaction.options.getUser('opponent')} added with the result of ${interaction.options.getString('results')}.`, components: [row]});
 			
 						const filter = i => i.customId === 'confirm' && i.user.id === interaction.options.getUser('opponent').id;
 						const collector = interaction.channel.createMessageComponentCollector({filter});
@@ -148,22 +149,22 @@ module.exports = {
 										getLosingSubject.update({research_points: (getLosingSubject.research_points + 15)})
 										break;
 								}
-								await i.update({ content: `Confirmed ${interaction.user} ${getMatch.results} ${ interaction.options.getUser('opponent')}`, components: [] });
+								await i.update({ content: `Confirmed ${interaction.user} ${getMatch.results} ${ interaction.options.getUser('opponent')}`, components: []});
 							}
 						});
 					} else {
-						await interaction.reply({content: `You have attempted to submit a match outside of the desginated day or hours!`})
+						await interaction.editReply({content: `You have attempted to submit a match outside of the desginated day or hours!`})
 					}
 				} else {
-					await interaction.reply({content: `This appears to be a duplicate match`})
+					await interaction.editReply({content: `This appears to be a duplicate match`})
 				}
 				} else {
-					await interaction.reply({content: `You can't claim a match against yourself`})
+					await interaction.editReply({content: `You can't claim a match against yourself`})
 				}
 		} else if (!getWinningSubject) {
-			await interaction.reply({content: `You are not registered, please do so with the /register command`})
+			await interaction.editReply({content: `You are not registered, please do so with the /register command`})
 		} else if (!getLosingSubject) {
-			await interaction.reply({content: `Your opponent is not registered, please have them do so with the /register command`})
+			await interaction.editReply({content: `Your opponent is not registered, please have them do so with the /register command` })
 		}
 	}
 };

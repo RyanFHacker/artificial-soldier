@@ -26,7 +26,8 @@ module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('setrank')
 		.setDescription('Reset the list of the top ranked players in the combat experiment.'),
-	async execute(interaction) {;
+	async execute(interaction) {
+		await interaction.deferReply();
 		if (interaction.user.id == config.dadminId) {
 			await Subjects.update({ rank: undefined }, {
 				where: { subject_id: {[Op.not]: null }}
@@ -53,7 +54,7 @@ module.exports = {
 			}
 			scoreboard += "```"
 
-			await interaction.reply({content: scoreboard, ephmeral: true});
+			await interaction.editReply({ content: scoreboard });
 		}
 	},
 };

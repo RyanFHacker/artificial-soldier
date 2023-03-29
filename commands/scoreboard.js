@@ -27,6 +27,7 @@ module.exports = {
 		.setName('scoreboard')
 		.setDescription('Display scoreboard'),
 	async execute(interaction) {
+		await interaction.deferReply({ ephemeral: true });
 		// Get a list of all subjects by score
 		const scores = await Subjects.findAll({ 
 			order: [
@@ -49,6 +50,6 @@ module.exports = {
 		}
 		scoreboard += "```"
 
-		await interaction.reply({ content: scoreboard, ephmeral: true});
+		await interaction.editReply({ content: scoreboard });
 	},
 };

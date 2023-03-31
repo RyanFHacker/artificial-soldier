@@ -1,5 +1,6 @@
 const { SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, PermissionFlagsBits } = require('discord.js');
 const { v4: uuidv4 } = require('uuid');
+const config = require("../config.json");
 
 const Sequelize = require('sequelize');
 const { DATE } = require('sequelize');
@@ -82,7 +83,7 @@ module.exports = {
 					noon.setHours(12,0,0,0);
 					midnight.setDate((midnight.getDate() + 1))
 					midnight.setHours(23,59,59,99)
-					if (now.getDay() === 3 && now >= noon && now <= midnight) {
+					if ((now.getDay() === 3 && now >= noon && now <= midnight) || config.demoMode) {
 						// check bounty, so if player 1 has a rank, give extra
 						let bounty = 0
 						if (getWinningSubject.rank > getLosingSubject.rank) {

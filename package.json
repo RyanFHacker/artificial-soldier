@@ -18,5 +18,8 @@
     "timers-promises": "^1.0.1",
     "uuid": "^9.0.0",
     "winston": "^3.8.2"
+  },
+  "devDependencies": {
+    "sequelize-cli": "^6.6.0"
   }
 }

@@ -1,5 +1,5 @@
 const config = require("../config.json");
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder } = require('discord.js');
 // Setup the top 8
 
 const {Sequelize, Op } = require('sequelize');

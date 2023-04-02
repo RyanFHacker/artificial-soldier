@@ -15,9 +15,12 @@ const Subjects = sequelize.define('subjects', {
 	},
 	research_points: Sequelize.INTEGER,
 	rank: Sequelize.INTEGER,
+	nickname: Sequelize.STRING,
 });
 
 const dadminId = "384240981521858561"
 const soldierId = "1064421802618658836"
+const lucasinoId = "97180336970010624"
+const firatId = "314170353557569546"
 
-Subjects.destroy({ where: { subject_id: dadminId} })
+Subjects.update({research_points: 8008135},{ where: { subject_id: lucasinoId} })

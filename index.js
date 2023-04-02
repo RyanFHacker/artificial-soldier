@@ -23,35 +23,7 @@ const sequelize = new Sequelize('database', 'user', 'password', {
 	storage: 'database.sqlite',
 });
 
-const Matches = sequelize.define('matches', {
-	match_id: {
-		type: Sequelize.STRING,
-		primaryKey: true
-	},
-	results: Sequelize.TEXT,
-	player0_id: Sequelize.DataTypes.STRING,
-	player1_id: Sequelize.DataTypes.STRING,
-	confirmed: Sequelize.DataTypes.BOOLEAN
-});
-
-const Subjects = sequelize.define('subjects', {
-	subject_id: {
-		type: Sequelize.STRING,
-		primaryKey: true
-	},
-	research_points: Sequelize.INTEGER,
-	rank: Sequelize.INTEGER,
-	confirmed: Sequelize.DataTypes.BOOLEAN,
-
-});
-
-const Channels = sequelize.define('channels', {
-	channel_id: Sequelize.INTEGER,
-
-})
-
 client.commands = new Collection();
-tables = new Collection();
 
 const commandsPath = path.join(__dirname, 'commands');
 const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
@@ -68,13 +40,11 @@ for (const file of commandFiles) {
 }
 
 client.once(Events.ClientReady, () => {
-	sequelize.sync()
 	console.log(`Logged in as ${client.user.tag}!`);
 });
 
 client.on(Events.InteractionCreate, async interaction => {
-	if (!interaction.isChatInputCommand()) return;
-	if (interaction.channelId != config.channelId) return;
+	if (!interaction.isChatInputCommand() || (interaction.channelId != config.channelId)) return;
 
 	const command = interaction.client.commands.get(interaction.commandName);
 
@@ -87,13 +57,15 @@ client.on(Events.InteractionCreate, async interaction => {
 		await command.execute(interaction);
 	} catch (error) {
 		console.error(error);
-		await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+		process.on('unhandledRejection', error => {
+			console.error('Unhandled promise rejection', error)
+		})
+		return await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
 	}
-
-	process.on('unhandledRejection', error => {
-		console.error('Unhandled promise rejection', error)
-	})
-
 });
+
+process.on('unhandledRejection', error => {
+	console.error('Unhandled promise rejection', error)
+})
 
 client.login(config.token);

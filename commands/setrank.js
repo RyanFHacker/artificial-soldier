@@ -20,6 +20,7 @@ const Subjects = sequelize.define('subjects', {
 	research_points: Sequelize.INTEGER,
 	rank: Sequelize.INTEGER,
 	confirmed: Sequelize.DataTypes.BOOLEAN,
+	nickname: Sequelize.STRING,
 });
 
 module.exports = {
@@ -27,16 +28,18 @@ module.exports = {
 		.setName('setrank')
 		.setDescription('Reset the list of the top ranked players in the combat experiment.'),
 	async execute(interaction) {
-		await interaction.deferReply();
+		await interaction.reply({content: "Loading...", ephemeral: true});
 		if (interaction.user.id == config.dadminId) {
 			await Subjects.update({ rank: undefined }, {
 				where: { subject_id: {[Op.not]: null }}
 			})
-			const getTopEight = await Subjects.findAll({ limit: 8, order: [
-				['research_points', 'DESC'],
-			] });
+			const getTopEight = await Subjects.findAll({ limit: 8,
+				order: [
+					['research_points', 'DESC']],
+				attributes: [
+					'subject_id', 'research_points', 'rank', 'nickname'] 
+			});
 
-			const guild = await interaction.client.guilds.fetch(config.guildId)
 			let scoreboard = "```fix\nRANK  POINTS  NAME\n"
 			var i = 0
 			while (i < getTopEight.length) {
@@ -45,16 +48,16 @@ module.exports = {
 				await Subjects.update({ rank: rank }, {
 					where: { subject_id: userId }
 				});
-				const member = await guild.members.fetch(userId);
+
 				let score = ("        " + getTopEight[i].research_points).slice(-8)
 				let scoreboardRank = ("     " +  rank).slice(-2);
-				let subject = ("    " + member.nickname)
+				let subject = ("    " + getTopEight[i].nickname)
 				scoreboard+= `${scoreboardRank}${score}${subject}\n`
 				i++
 			}
 			scoreboard += "```"
 
-			await interaction.editReply({ content: scoreboard });
+			await interaction.followUp({ content: scoreboard });
 		}
 	},
 };

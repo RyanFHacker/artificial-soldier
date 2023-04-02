@@ -20,6 +20,7 @@ const Subjects = sequelize.define('subjects', {
 	research_points: Sequelize.INTEGER,
 	rank: Sequelize.INTEGER,
 	confirmed: Sequelize.DataTypes.BOOLEAN,
+	nickname: Sequelize.STRING
 });
 
 module.exports = {
@@ -33,18 +34,15 @@ module.exports = {
 			order: [
 				['research_points', 'DESC']],
 			attributes: [
-				'subject_id', 'research_points', 'rank']
-			})
+				'subject_id', 'research_points', 'rank', 'nickname']
+		});
 		
-		const guild = await interaction.client.guilds.fetch(config.guildId)
 		let scoreboard = "```fix\nPOINTS  RANK  NAME\n"
 		var i = 0
 		while (i < scores.length) {
-			let userId = scores[i].subject_id
-			const member = await guild.members.fetch(userId);
 			let score = ("    " + scores[i].research_points).slice(-4)
 			let rank = scores[i].rank ? ("     " + scores[i].rank) : '    ';
-			let subject = ("    " + member.nickname)
+			let subject = ("    " + scores[i].nickname)
 			scoreboard+= `${score}${rank}${subject}\n`
 			i++
 		}

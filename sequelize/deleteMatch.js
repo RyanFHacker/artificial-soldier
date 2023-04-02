@@ -16,7 +16,9 @@ const Matches = sequelize.define('matches', {
 	},
 	results: Sequelize.TEXT,
 	player0_id: Sequelize.DataTypes.STRING,
+	player0_nickname: Sequelize.DataTypes.STRING,
 	player1_id: Sequelize.DataTypes.STRING,
+	player1_nickname: Sequelize.DataTypes.STRING,
 	confirmed: Sequelize.DataTypes.BOOLEAN
 });
 

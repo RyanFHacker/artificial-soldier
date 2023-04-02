@@ -30,10 +30,11 @@ module.exports = {
 	async execute(interaction) {
 		await interaction.deferReply({content: "Loading...", ephemeral: true});
 		if (interaction.user.id == config.dadminId) {
+			const limit = 8
 			await Subjects.update({ rank: undefined }, {
 				where: { subject_id: {[Op.not]: null }}
 			})
-			const getTopEight = await Subjects.findAll({ limit: 8,
+			const getTopEight = await Subjects.findAll({ limit: 0 || limit,
 				order: [
 					['research_points', 'DESC']],
 				attributes: [

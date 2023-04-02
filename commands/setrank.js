@@ -28,7 +28,7 @@ module.exports = {
 		.setName('setrank')
 		.setDescription('Reset the list of the top ranked players in the combat experiment.'),
 	async execute(interaction) {
-		await interaction.reply({content: "Loading...", ephemeral: true});
+		await interaction.deferReply({content: "Loading...", ephemeral: true});
 		if (interaction.user.id == config.dadminId) {
 			await Subjects.update({ rank: undefined }, {
 				where: { subject_id: {[Op.not]: null }}
@@ -57,7 +57,7 @@ module.exports = {
 			}
 			scoreboard += "```"
 
-			await interaction.followUp({ content: scoreboard });
+			await interaction.editReply({ content: scoreboard });
 		}
 	},
 };

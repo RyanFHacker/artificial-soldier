@@ -59,7 +59,7 @@ module.exports = {
             ))
 		.setDefaultMemberPermissions(PermissionFlagsBits.ViewChannel),
 	async execute(interaction) {
-		await interaction.deferReply({content: "Loading!", ephemeral: true});
+		await interaction.deferReply({content: "Loading!"});
 		try {
 			const player0 = interaction.user
 			const player1 = interaction.options.getUser('opponent')

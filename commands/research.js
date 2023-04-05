@@ -59,20 +59,22 @@ module.exports = {
             ))
 		.setDefaultMemberPermissions(PermissionFlagsBits.ViewChannel),
 	async execute(interaction) {
-		await interaction.deferReply({content: "Loading!"});
+		await interaction.deferReply({content: "Loading!", ephemeral: true});
 		try {
 			const player0 = interaction.user
 			const player1 = interaction.options.getUser('opponent')
 			const getWinningSubject = await Subjects.findOne({ where: { subject_id: player0.id} })
 			const getLosingSubject = await Subjects.findOne({ where: { subject_id: player1.id} })
 			const match_id = uuidv4();
+			const deny_id = uuidv4();
 
 			let match
 
-			const filter = i => i.customId === match_id && i.user.id === player1.id;
+			const filter = i => i.user.id === player1.id;
 			const collector = interaction.channel.createMessageComponentCollector({filter});
 
 			collector.on('collect', async i => {
+				if (i.customId === match_id) {
 				// check bounty, so if player 1 has a rank, give extra
 				let bounty = 0
 				if (getWinningSubject.rank > getLosingSubject.rank) {
@@ -124,6 +126,13 @@ module.exports = {
 					}
 					return await i.update({ content: `Confirmed ${match.player0_nickname} ${match.results} ${match.player1_nickname}`, components: [] })
 				}
+				} else if (i.customId === deny_id ) {
+					//remove the match
+					console.log(match_id)
+					Matches.destroy({ where: { match_id: match_id}})
+					return await i.update({ content: `Denied ${match.player0_nickname} ${match.results} ${match.player1_nickname}`, components: [] })
+				}
+
 			});
 
 			// Verify both subjects are registered
@@ -160,7 +169,13 @@ module.exports = {
 										.setCustomId(match_id)
 										.setLabel('Confirm')
 										.setStyle(ButtonStyle.Success),
-								);
+								)
+								.addComponents(
+									new ButtonBuilder()
+										.setCustomId(deny_id)
+										.setLabel('Deny')
+										.setStyle(ButtonStyle.Secondary),
+								)
 
 							return await interaction.editReply({ content: `Match between ${match.player0_nickname} and ${match.player1_nickname} added with the result of ${match.results}.`, components: [row]});
 						} else {

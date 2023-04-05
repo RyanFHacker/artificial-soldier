@@ -2,6 +2,8 @@
 *.log
 node_modules
 config.json
+prodConfig.json
+initRanks.js
 *.png
 
 #amplify-do-not-edit-begin

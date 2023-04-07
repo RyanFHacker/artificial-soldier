@@ -1,7 +1,6 @@
 const config = require("./config.json");
 const fs = require('node:fs');
 const path = require('node:path');
-const Sequelize = require('sequelize');
 
 const { Client, GatewayIntentBits, Collection, Events, IntentsBitField } = require('discord.js');
 
@@ -14,14 +13,6 @@ const client = new Client({
 	  GatewayIntentBits.GuildMembers
 	]
   });
-
-const sequelize = new Sequelize('database', 'user', 'password', {
-	host: 'localhost',
-	dialect: 'sqlite',
-	logging: false,
-	// SQLite only
-	storage: 'database.sqlite',
-});
 
 client.commands = new Collection();
 

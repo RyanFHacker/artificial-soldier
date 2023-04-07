@@ -3,40 +3,9 @@ const { v4: uuidv4 } = require('uuid');
 const config = require("../config.json");
 
 const Sequelize = require('sequelize');
-const { DATE } = require('sequelize');
 
-const sequelize = new Sequelize('database', 'user', 'password', {
-	host: 'localhost',
-	dialect: 'sqlite',
-	logging: false,
-	// SQLite only
-	storage: 'database.sqlite',
-});
-
-const Matches = sequelize.define('matches', {
-	match_id: {
-		type: Sequelize.STRING,
-		primaryKey: true
-	},
-	results: Sequelize.TEXT,
-	player0_id: Sequelize.DataTypes.STRING,
-	player0_nickname: Sequelize.DataTypes.STRING,
-	player1_id: Sequelize.DataTypes.STRING,
-	player1_nickname: Sequelize.DataTypes.STRING,
-	confirmed: Sequelize.DataTypes.BOOLEAN
-});
-
-const Subjects = sequelize.define('subjects', {
-	subject_id: {
-		type: Sequelize.STRING,
-		primaryKey: true
-	},
-	research_points: Sequelize.INTEGER,
-	rank: Sequelize.INTEGER,
-	confirmed: Sequelize.DataTypes.BOOLEAN,
-	nickname: Sequelize.STRING,
-});
-
+const MatchesModel = require("../models/Matches");
+const SubjectsModel = require("../models/Subjects");
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -63,8 +32,8 @@ module.exports = {
 		try {
 			const player0 = interaction.user
 			const player1 = interaction.options.getUser('opponent')
-			const getWinningSubject = await Subjects.findOne({ where: { subject_id: player0.id} })
-			const getLosingSubject = await Subjects.findOne({ where: { subject_id: player1.id} })
+			const getWinningSubject = await SubjectsModel.findOne({ where: { subject_id: player0.id} })
+			const getLosingSubject = await SubjectsModel.findOne({ where: { subject_id: player1.id} })
 			const match_id = uuidv4();
 			const deny_id = uuidv4();
 
@@ -112,16 +81,16 @@ module.exports = {
 					match.update({confirmed: true})
 					switch (match.results) {
 						case '3-0':
-							await Subjects.increment({research_points: (+20+bounty)}, { where: { subject_id:getWinningSubject.subject_id }});
-							await Subjects.increment({research_points: (+5+bounty)}, { where: { subject_id:getLosingSubject.subject_id }});
+							await SubjectsModel.increment({research_points: (+20+bounty)}, { where: { subject_id:getWinningSubject.subject_id }});
+							await SubjectsModel.increment({research_points: (+5+bounty)}, { where: { subject_id:getLosingSubject.subject_id }});
 							break;
 						case '3-1':
-							await Subjects.increment({research_points: (+20+bounty)}, { where: { subject_id:getWinningSubject.subject_id }});
-							await Subjects.increment({research_points: (+10+bounty)}, { where: { subject_id:getLosingSubject.subject_id }});
+							await SubjectsModel.increment({research_points: (+20+bounty)}, { where: { subject_id:getWinningSubject.subject_id }});
+							await SubjectsModel.increment({research_points: (+10+bounty)}, { where: { subject_id:getLosingSubject.subject_id }});
 							break;
 						case '3-2':
-							await Subjects.increment({research_points: (+20+bounty)}, { where: { subject_id:getWinningSubject.subject_id }});
-							await Subjects.increment({research_points: (+15+bounty)}, { where: { subject_id:getLosingSubject.subject_id }});
+							await SubjectsModel.increment({research_points: (+20+bounty)}, { where: { subject_id:getWinningSubject.subject_id }});
+							await SubjectsModel.increment({research_points: (+15+bounty)}, { where: { subject_id:getLosingSubject.subject_id }});
 							break;
 					}
 					return await i.update({ content: `Confirmed ${match.player0_nickname} ${match.results} ${match.player1_nickname}`, components: [] })
@@ -129,7 +98,7 @@ module.exports = {
 				} else if (i.customId === deny_id ) {
 					//remove the match
 					console.log(match_id)
-					Matches.destroy({ where: { match_id: match_id}})
+					MatchesModel.destroy({ where: { match_id: match_id}})
 					return await i.update({ content: `Denied ${match.player0_nickname} ${match.results} ${match.player1_nickname}`, components: [] })
 				}
 
@@ -139,7 +108,7 @@ module.exports = {
 			if (getWinningSubject && getLosingSubject) {
 				// Don't allow a user to enter themselves
 				if ((interaction.user != interaction.options.getUser('opponent') || config.selfPlay)) {
-					const duplicateMatchToday = await Matches.findOne({ where: 
+					const duplicateMatchToday = await MatchesModel.findOne({ where: 
 						{ player0_id: {[Sequelize.Op.or]: [player0.id, player1.id]}, player1_id: {[Sequelize.Op.or]: [player0.id, player1.id]}, createdAt: {[Sequelize.Op.gt]: new Date(new Date() - 24 * 60 * 60 * 1000)}} });
 					if (!duplicateMatchToday || config.duplicates) {
 						// only from 12 PM to 12 AM Wednesday
@@ -153,7 +122,7 @@ module.exports = {
 						if ((now.getDay() === 3 && now >= noon && now <= midnight) || config.wednesday) {
 						
 							// create match
-							match = await Matches.create({
+							match = await MatchesModel.create({
 								match_id: match_id,
 								results:interaction.options.getString('results'),
 								player0_id: player0.id,

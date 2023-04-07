@@ -1,27 +1,6 @@
-const config = require("../config.json");
-
 const { SlashCommandBuilder } = require('discord.js');
 
-const Sequelize = require('sequelize');
-
-const sequelize = new Sequelize('database', 'user', 'password', {
-	host: 'localhost',
-	dialect: 'sqlite',
-	logging: false,
-	// SQLite only
-	storage: 'database.sqlite',
-});
-
-const Subjects = sequelize.define('subjects', {
-	subject_id: {
-		type: Sequelize.STRING,
-		primaryKey: true
-	},
-	research_points: Sequelize.INTEGER,
-	rank: Sequelize.INTEGER,
-	confirmed: Sequelize.DataTypes.BOOLEAN,
-	nickname: Sequelize.STRING
-});
+const SubjectsModel = require("../models/Subjects");
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -30,7 +9,7 @@ module.exports = {
 	async execute(interaction) {
 		await interaction.deferReply({ ephemeral: true });
 		// Get a list of all subjects by score
-		const scores = await Subjects.findAll({ 
+		const scores = await SubjectsModel.findAll({ 
 			order: [
 				['research_points', 'DESC']],
 			attributes: [

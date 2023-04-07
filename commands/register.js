@@ -1,25 +1,6 @@
 const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
 
-const Sequelize = require('sequelize');
-
-const sequelize = new Sequelize('database', 'user', 'password', {
-	host: 'localhost',
-	dialect: 'sqlite',
-	logging: false,
-	// SQLite only
-	storage: 'database.sqlite',
-});
-
-const Subjects = sequelize.define('subjects', {
-    subject_id: {
-		type: Sequelize.STRING,
-		primaryKey: true
-	},
-	research_points: Sequelize.INTEGER,
-	rank: Sequelize.INTEGER,
-    confirmed: Sequelize.DataTypes.BOOLEAN,
-    nickname: Sequelize.STRING,
-});
+const SubjectsModel = require("../models/Subjects");
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -36,7 +17,7 @@ module.exports = {
         const nickname = interaction.options.getString('nickname')
         const getSubject = await Subjects.findOne({ where: { subject_id: subject_id} });
             if (!getSubject) {
-                await Subjects.create({
+                await SubjectsModel.create({
                     subject_id: subject_id,
                     research_points: 0,
                     confirmed: false,

@@ -97,7 +97,6 @@ module.exports = {
 				}
 				} else if (i.customId === deny_id ) {
 					//remove the match
-					console.log(match_id)
 					MatchesModel.destroy({ where: { match_id: match_id}})
 					return await i.update({ content: `Denied ${match.player0_nickname} ${match.results} ${match.player1_nickname}`, components: [] })
 				}

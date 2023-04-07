@@ -41,7 +41,7 @@ module.exports = {
 		var i = 0
 		while (i < scores.length) {
 			let score = ("    " + scores[i].research_points).slice(-4)
-			let rank = scores[i].rank ? ("     " + scores[i].rank) : '    ';
+			let rank = scores[i].rank ? ("     " + scores[i].rank) : '      ';
 			let subject = ("    " + scores[i].nickname)
 			scoreboard+= `${score}${rank}${subject}\n`
 			i++

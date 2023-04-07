@@ -31,7 +31,7 @@ module.exports = {
 		await interaction.deferReply({content: "Loading...", ephemeral: true});
 		if (interaction.user.id == config.dadminId) {
 			const limit = 8
-			await Subjects.update({ rank: undefined }, {
+			await Subjects.update({ rank: '' }, {
 				where: { subject_id: {[Op.not]: null }}
 			})
 			const getTopEight = await Subjects.findAll({ limit: 0 || limit,

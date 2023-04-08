@@ -18,6 +18,6 @@ module.exports = {
             where: { subject_id: subject_id }
         });
 
-		await interaction.editReply({ content: `Nickname updated to ${nickname}` });
+		return await interaction.editReply({ content: `Nickname updated to ${nickname}` });
 	},
 };

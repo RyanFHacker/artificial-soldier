@@ -23,9 +23,9 @@ module.exports = {
                     confirmed: false,
                     nickname: nickname
                 });
-                await interaction.editReply({ content: `Registered ${interaction.user} as ${nickname}`, components: []});
+                return await interaction.editReply({ content: `Registered ${interaction.user} as ${nickname}`, components: []});
             } else {
-                await interaction.editReply({ content: `You appear to already be registered.`});
+                return await interaction.editReply({ content: `You appear to already be registered.`});
             }
 	},
 };

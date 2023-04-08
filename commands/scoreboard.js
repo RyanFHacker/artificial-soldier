@@ -27,6 +27,6 @@ module.exports = {
 		}
 		scoreboard += "```"
 
-		await interaction.editReply({ content: scoreboard });
+		return await interaction.editReply({ content: scoreboard });
 	},
 };

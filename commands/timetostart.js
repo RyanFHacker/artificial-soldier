@@ -25,7 +25,6 @@ module.exports = {
         var start = `There are ${hoursDifference} hrs ${minutesDifference} min remaining until Combat Research begins.\n`
         // var end =  `There are ${timeToEnd.toFixed(2)} hours until the end of the current event`
 
-		await interaction.editReply({ content: `${start}` });
-		return;
+		return await interaction.editReply({ content: `${start}` });
 	},
 };

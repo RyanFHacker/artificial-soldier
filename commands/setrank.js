@@ -1,27 +1,9 @@
 const config = require("../config.json");
 const { SlashCommandBuilder } = require('discord.js');
 // Setup the top 8
+const { Op } = require('sequelize');
 
-const {Sequelize, Op } = require('sequelize');
-
-const sequelize = new Sequelize('database', 'user', 'password', {
-	host: 'localhost',
-	dialect: 'sqlite',
-	logging: false,
-	// SQLite only
-	storage: 'database.sqlite',
-});
-
-const Subjects = sequelize.define('subjects', {
-    subject_id: {
-		type: Sequelize.STRING,
-		primaryKey: true
-	},
-	research_points: Sequelize.INTEGER,
-	rank: Sequelize.INTEGER,
-	confirmed: Sequelize.DataTypes.BOOLEAN,
-	nickname: Sequelize.STRING,
-});
+const SubjectsModel = require("../models/Subjects");
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -31,10 +13,12 @@ module.exports = {
 		await interaction.deferReply({content: "Loading...", ephemeral: true});
 		if (interaction.user.id == config.dadminId) {
 			const limit = 8
-			await Subjects.update({ rank: undefined }, {
+			
+			await SubjectsModel.update({ rank: '' }, {
 				where: { subject_id: {[Op.not]: null }}
 			})
-			const getTopEight = await Subjects.findAll({ limit: 0 || limit,
+
+			const getTopEight = await SubjectsModel.findAll({ limit: 0 || limit,
 				order: [
 					['research_points', 'DESC']],
 				attributes: [
@@ -46,7 +30,7 @@ module.exports = {
 			while (i < getTopEight.length) {
 				let userId = getTopEight[i].subject_id
 				let rank = i + 1
-				await Subjects.update({ rank: rank }, {
+				await SubjectsModel.update({ rank: rank }, {
 					where: { subject_id: userId }
 				});
 
@@ -58,7 +42,7 @@ module.exports = {
 			}
 			scoreboard += "```"
 
-			await interaction.editReply({ content: scoreboard });
+			return await interaction.editReply({ content: scoreboard });
 		}
 	},
 };

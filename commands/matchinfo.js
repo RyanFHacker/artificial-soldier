@@ -7,6 +7,6 @@ module.exports = {
 	async execute(interaction) {
 		await interaction.deferReply({ ephemeral: true });
 		let scoreboard = "```md\nSCORE  WINNER  LOSER\n3-0    20 pts   5 pts\n3-1    20 pts  10 pts\n3-2    20 pts  15 pts\n```";
-		await interaction.editReply({ content: scoreboard });
+		return await interaction.editReply({ content: scoreboard });
 	},
 };

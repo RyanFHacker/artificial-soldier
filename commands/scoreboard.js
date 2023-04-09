@@ -17,7 +17,7 @@ module.exports = {
 		});
 		
 		let scoreboard = "```fix\nPOINTS  RANK  NAME\n"
-		var i = 0
+		let i = 0
 		while (i < scores.length) {
 			let score = ("    " + scores[i].research_points).slice(-4)
 			let rank = scores[i].rank ? ("     " + scores[i].rank) : '      ';

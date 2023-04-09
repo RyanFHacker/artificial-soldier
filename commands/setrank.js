@@ -26,7 +26,7 @@ module.exports = {
 			});
 
 			let scoreboard = "```fix\nRANK  POINTS  NAME\n"
-			var i = 0
+			let i = 0
 			while (i < getTopEight.length) {
 				let userId = getTopEight[i].subject_id
 				let rank = i + 1

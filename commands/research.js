@@ -111,9 +111,9 @@ module.exports = {
 						{ player0_id: {[Sequelize.Op.or]: [player0.id, player1.id]}, player1_id: {[Sequelize.Op.or]: [player0.id, player1.id]}, createdAt: {[Sequelize.Op.gt]: new Date(new Date() - 24 * 60 * 60 * 1000)}} });
 					if (!duplicateMatchToday || config.duplicates) {
 						// only from 12 PM to 12 AM Wednesday
-						var noon = new Date()
-						var midnight = new Date();
-						var now = new Date()
+						const now = new Date()
+						let noon = new Date()
+						let midnight = new Date();
 	
 						noon.setHours(12,0,0,0);
 						midnight.setDate((midnight.getDate() + 1))

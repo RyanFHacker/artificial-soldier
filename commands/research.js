@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, PermissionFlagsBits } = require('discord.js');
 const { v4: uuidv4 } = require('uuid');
-const config = require("../config.json");
+const config = require("../prodConfig.json");
 
 const Sequelize = require('sequelize');
 
@@ -11,6 +11,15 @@ module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('research')
 		.setDescription('Enter your research match.')
+		.addStringOption(option =>
+			option
+				.setName('game')
+				.setDescription('Select the game that was played')
+				.setRequired(true)
+				.addChoices(
+					{name: 'SF6', value: 'sf6'},
+					{name: 'GGST', value: 'ggst'}
+				))
         .addUserOption(option =>
 			option
 				.setName('opponent')
@@ -46,7 +55,7 @@ module.exports = {
 				if (i.customId === match_id) {
 				// check bounty, so if player 1 has a rank, give extra
 				let bounty = 0
-				if (getWinningSubject.rank > getLosingSubject.rank) {
+				if (getWinningSubject.rank < getLosingSubject.rank) {
 					switch (getLosingSubject.rank) {
 						case 1:
 							bounty = 30
@@ -82,15 +91,15 @@ module.exports = {
 					switch (match.results) {
 						case '3-0':
 							await SubjectsModel.increment({research_points: (+20+bounty)}, { where: { subject_id:getWinningSubject.subject_id }});
-							await SubjectsModel.increment({research_points: (+5+bounty)}, { where: { subject_id:getLosingSubject.subject_id }});
+							await SubjectsModel.increment({research_points: (+5)}, { where: { subject_id:getLosingSubject.subject_id }});
 							break;
 						case '3-1':
 							await SubjectsModel.increment({research_points: (+20+bounty)}, { where: { subject_id:getWinningSubject.subject_id }});
-							await SubjectsModel.increment({research_points: (+10+bounty)}, { where: { subject_id:getLosingSubject.subject_id }});
+							await SubjectsModel.increment({research_points: (+10)}, { where: { subject_id:getLosingSubject.subject_id }});
 							break;
 						case '3-2':
 							await SubjectsModel.increment({research_points: (+20+bounty)}, { where: { subject_id:getWinningSubject.subject_id }});
-							await SubjectsModel.increment({research_points: (+15+bounty)}, { where: { subject_id:getLosingSubject.subject_id }});
+							await SubjectsModel.increment({research_points: (+15)}, { where: { subject_id:getLosingSubject.subject_id }});
 							break;
 					}
 					return await i.update({ content: `Confirmed ${match.player0_nickname} ${match.results} ${match.player1_nickname}`, components: [] })

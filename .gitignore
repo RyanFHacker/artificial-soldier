@@ -1,8 +1,7 @@
 *.sqlite
 *.log
+*.json
 node_modules
-config.json
-prodConfig.json
 initRanks.js
 *.png
 

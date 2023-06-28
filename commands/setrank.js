@@ -1,4 +1,4 @@
-const config = require("../config.json");
+const config = require("../prodConfig.json");
 const { SlashCommandBuilder } = require('discord.js');
 // Setup the top 8
 const { Op } = require('sequelize');

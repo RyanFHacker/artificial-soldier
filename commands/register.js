@@ -30,7 +30,6 @@ module.exports = {
                     await SubjectsModel.create({
                         subject_id: subject_id,
                         research_points: 0,
-                        confirmed: false,
                         nickname: nickname,
                         game_id: game_id
                     });

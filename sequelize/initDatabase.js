@@ -27,7 +27,6 @@ const Subjects = sequelize.define('subjects', {
 	},
 	research_points: Sequelize.INTEGER,
 	rank: Sequelize.INTEGER,
-	confirmed: Sequelize.DataTypes.BOOLEAN,
 	nickname: Sequelize.STRING,
 	game_id: Sequelize.STRING
 });
@@ -45,6 +44,27 @@ const Games = sequelize.define('games', {
     name: Sequelize.TEXT,
     setcount: Sequelize.INTEGER,
     enabled: Sequelize.DataTypes.BOOLEAN
+});
+
+const Bounties = sequelize.define('bounties', {
+	game_id: Sequelize.STRING,
+    position: Sequelize.STRING,
+	position_value: Sequelize.INTEGER,
+    points: Sequelize.INTEGER
+});
+
+const MatchOutcomes = sequelize.define('matchOutcomes', {
+    id: {
+		type: Sequelize.INTEGER,
+		primaryKey: true
+	},
+    game_id: Sequelize.STRING,
+    winner_sets: Sequelize.INTEGER,
+    loser_sets: Sequelize.INTEGER,
+    winner_points: Sequelize.INTEGER,
+    loser_points: Sequelize.INTEGER
+},{
+    timestamps: false,
 });
 
 sequelize.sync()

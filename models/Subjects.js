@@ -8,7 +8,6 @@ const Subjects = sequelize.define('subjects', {
 	},
 	research_points: Sequelize.INTEGER,
 	rank: Sequelize.INTEGER,
-	confirmed: Sequelize.DataTypes.BOOLEAN,
 	nickname: Sequelize.STRING,
 	game_id: Sequelize.STRING
 });

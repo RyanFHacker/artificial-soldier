@@ -4,8 +4,8 @@ const SubjectsModel = require("../models/Subjects");
 
 module.exports = {
 	data: new SlashCommandBuilder()
-		.setName('scoreboard')
-		.setDescription('Display scoreboard')
+		.setName('top8')
+		.setDescription('Display top 8 Subjects')
 		.addStringOption(option =>
             option.setName('game')
                 .setRequired(true)
@@ -19,6 +19,7 @@ module.exports = {
 		// Get a list of all subjects by score
 		const game_id = interaction.options.getString('game')
 		const scores = await SubjectsModel.findAll({
+            limit: 8,
 			order: [
 				['research_points', 'DESC']],
 			attributes: [

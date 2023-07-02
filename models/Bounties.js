@@ -7,6 +7,8 @@ const Bounties = sequelize.define('bounties', {
     position: Sequelize.STRING,
     position_value: Sequelize.INTEGER,
     points: Sequelize.INTEGER
+},{
+    timestamps: false,
 });
 
 module.exports = Bounties;

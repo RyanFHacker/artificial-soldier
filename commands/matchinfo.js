@@ -18,6 +18,8 @@ module.exports = {
 		await interaction.deferReply({ ephemeral: true });
 		const game_id = interaction.options.getString('game')
 		let matchOutcomes = await MatchOutcomesModel.findAll({
+			order: [
+				['loser_sets', 'DESC']],
 			where: {
 			game_id: game_id
 		}})
@@ -26,7 +28,7 @@ module.exports = {
 		let scores = ''
 		
 		matchOutcomes.forEach(element => {
-			scores += `${element.winner_points} pts ${element.winner_sets}  ${element.loser_points} pts${element.loser_sets}\n`
+			scores += `${element.winner_sets} - ${element.loser_sets}  ${element.winner_points} pts  ${element.loser_points} pts\n`
 		});
 		scoreboard = [scoreboard.slice(0, scoreboard.length-3), scores, scoreboard.slice(scoreboard.length-3, scoreboard.length)].join('');
 

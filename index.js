@@ -1,4 +1,4 @@
-const config = require("./config.json");
+const config = require("./prodConfig.json");
 const fs = require('node:fs');
 const path = require('node:path');
 

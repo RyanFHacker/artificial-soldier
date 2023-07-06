@@ -63,10 +63,10 @@ module.exports = {
 						}
 						// update match as confirmed
 						if (match) {
-							let match_outcome = await MatchOutcomesModel.findOne({ where: { loser_sets: loser_sets}})
+							let match_outcome = await MatchOutcomesModel.findOne({ where: { game_id: game_id, loser_sets: loser_sets }})
 							match.update({results: `${game.setcount} - ${loser_sets}`,confirmed: true, winner_points: match_outcome.winner_points, loser_points: match_outcome.loser_points, bounty_points: bounty})
-							await SubjectsModel.increment({research_points: (+match_outcome.winner_points+bounty)}, { where: { subject_id:getWinningSubject.subject_id }});
-							await SubjectsModel.increment({research_points: (+match_outcome.loser_points)}, { where: { subject_id:getLosingSubject.subject_id }});
+							await SubjectsModel.increment({research_points: (+match_outcome.winner_points+bounty)}, { where: { subject_id:getWinningSubject.subject_id, game_id: game_id}});
+							await SubjectsModel.increment({research_points: (+match_outcome.loser_points)}, { where: { subject_id:getLosingSubject.subject_id, game_id: game_id }});
 
 							return await i.update({ content: `Confirmed ${match.winner_nickname} ${match.results} ${match.loser_nickname}`, components: [] })
 						}
@@ -75,7 +75,6 @@ module.exports = {
 						MatchesModel.destroy({ where: { match_id: match_id}})
 						return await i.update({ content: `Denied ${match.winner_nickname} ${match.results} ${match.loser_nickname}`, components: [] })
 					}
-
 				});
 
 				// Verify both subjects are registered
@@ -83,7 +82,11 @@ module.exports = {
 					// Don't allow a user to enter themselves
 					if ((interaction.user != interaction.options.getUser('opponent') || config.selfPlay)) {
 						const duplicateMatchToday = await MatchesModel.findOne({ where: 
-							{ winner_id: {[Sequelize.Op.or]: [winner.id, loser.id]}, loser_id: {[Sequelize.Op.or]: [winner.id, loser.id]}, createdAt: {[Sequelize.Op.gt]: new Date(new Date() - 24 * 60 * 60 * 1000)}} });
+							{ winner_id: {[Sequelize.Op.or]: [winner.id, loser.id]},
+								loser_id: {[Sequelize.Op.or]: [winner.id, loser.id]}, 
+								game_id: game_id,
+								createdAt: {[Sequelize.Op.gt]: new Date(new Date() - 24 * 60 * 60 * 1000)}
+							} });
 						if (!duplicateMatchToday || config.duplicates) {
 							// only from 12 PM to 12 AM Wednesday
 							const now = new Date()
@@ -103,7 +106,8 @@ module.exports = {
 									winner_nickname: getWinningSubject.nickname,
 									loser_id: loser.id,
 									loser_nickname: getLosingSubject.nickname,
-									confirmed: false
+									confirmed: false,
+									game_id: game_id
 								});
 
 								const row = new ActionRowBuilder()

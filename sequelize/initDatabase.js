@@ -21,7 +21,8 @@ const Matches = sequelize.define('matches', {
 	loser_id: Sequelize.DataTypes.STRING,
 	loser_nickname: Sequelize.DataTypes.STRING,
 	loser_points: Sequelize.DataTypes.INTEGER,
-	confirmed: Sequelize.DataTypes.BOOLEAN
+	confirmed: Sequelize.DataTypes.BOOLEAN,
+	game_id: Sequelize.DataTypes.STRING
 });
 
 const Subjects = sequelize.define('subjects', {
@@ -70,4 +71,5 @@ const MatchOutcomes = sequelize.define('matchOutcomes', {
     timestamps: false,
 });
 
+// Matches.sync({ alter: true });
 sequelize.sync()

@@ -71,4 +71,5 @@ const MatchOutcomes = sequelize.define('matchOutcomes', {
     timestamps: false,
 });
 
+// Matches.sync({ alter: true });
 sequelize.sync()

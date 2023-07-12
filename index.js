@@ -36,6 +36,10 @@ client.once(Events.ClientReady, () => {
 
 client.on(Events.InteractionCreate, async interaction => {
 	if (!interaction.isChatInputCommand() || (interaction.channelId != config.channelId)) return;
+	if (interaction.isButton()) {
+		const button_id = uuidv4();
+		interaction.customId = button_id
+	}
 
 	const command = interaction.client.commands.get(interaction.commandName);
 

@@ -20,15 +20,13 @@ module.exports = {
 					where: { subject_id: {[Op.not]: null}}
 				})
 	
-				const getTopEight = SubjectsModel.findAll({ limit: 0 || limit,
+				const getTopEight = await SubjectsModel.findAll({ limit: 0 || limit,
 					order: [
 						['research_points', 'DESC']],
 					attributes: [
 						'subject_id', 'research_points', 'rank', 'nickname'],
 					where: { game_id: game.game_id }
 				});
-	
-				// let scoreboard = "```fix\nRANK  POINTS  NAME\n"
 				let i = 0
 				while (i < getTopEight.length) {
 					let userId = getTopEight[i].subject_id
@@ -36,17 +34,9 @@ module.exports = {
 					SubjectsModel.update({ rank: rank }, {
 						where: { subject_id: userId, game_id: game.game_id }
 					});
-	
-				// 	let score = ("        " + getTopEight[i].research_points).slice(-8)
-				// 	let scoreboardRank = ("     " +  rank).slice(-2);
-				// 	let subject = ("    " + getTopEight[i].nickname)
-				// 	scoreboard+= `${scoreboardRank}${score}${subject}\n`
 					i++
 				}
-				// scoreboard += "```"
 			});
-
-			// return await interaction.editReply({ content: scoreboard });
 			return await interaction.editReply({ content: `Ranks set` });
 		}
 	},

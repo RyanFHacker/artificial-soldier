@@ -59,12 +59,12 @@ module.exports = {
 						// get bounties based on game based on losing players rank
 						let bounty = 0
 						if (getWinningSubject.rank < getLosingSubject.rank) {
-							bounty = await BountiesModel.findOne({ where: { position: getLosingSubject.rank, game_id: game_id} })
+							bounty = await BountiesModel.findOne({ where: { position: getLosingSubject.rank, game_id: game.game_id} })
 						}
 						// update match as confirmed
 						if (match) {
 							let match_outcome = await MatchOutcomesModel.findOne({ where: { loser_sets: loser_sets}})
-							match.update({results: `${game.setcount} - ${loser_sets}`,confirmed: true, winner_points: match_outcome.winner_points, loser_points: match_outcome.loser_points, bounty_points: bounty})
+							match.update({results: `${game.setcount} - ${loser_sets}`,confirmed: true, winner_points: match_outcome.winner_points, loser_points: match_outcome.loser_points, bounty_points: bounty, game_id: game.game_id})
 							await SubjectsModel.increment({research_points: (+match_outcome.winner_points+bounty)}, { where: { subject_id:getWinningSubject.subject_id }});
 							await SubjectsModel.increment({research_points: (+match_outcome.loser_points)}, { where: { subject_id:getLosingSubject.subject_id }});
 
@@ -103,6 +103,7 @@ module.exports = {
 									winner_nickname: getWinningSubject.nickname,
 									loser_id: loser.id,
 									loser_nickname: getLosingSubject.nickname,
+                  game_id: game.game_id,
 									confirmed: false
 								});
 

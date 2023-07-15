@@ -1,10 +1,10 @@
 const config = require("../prodConfig.json");
-const { SlashCommandBuilder } = require('discord.js');
+const { SlashCommandBuilder } = require("discord.js");
 // Setup the top 8
-const { Op } = require('sequelize');
+const { Op } = require("sequelize");
 
 const SubjectsModel = require("../models/Subjects");
-const GamesModel = require("../models/Games")
+const GamesModel = require("../models/Games");
 
 module.exports = {
 	data: new SlashCommandBuilder()

@@ -15,11 +15,15 @@ const Matches = sequelize.define('matches', {
 		primaryKey: true
 	},
 	results: Sequelize.TEXT,
-	player0_id: Sequelize.DataTypes.STRING,
-	player0_nickname: Sequelize.DataTypes.STRING,
-	player1_id: Sequelize.DataTypes.STRING,
-	player1_nickname: Sequelize.DataTypes.STRING,
-	confirmed: Sequelize.DataTypes.BOOLEAN
+	winner_id: Sequelize.DataTypes.STRING,
+	winner_nickname: Sequelize.DataTypes.STRING,
+	winner_points: Sequelize.DataTypes.INTEGER,
+	bounty_points: Sequelize.DataTypes.INTEGER,
+	loser_id: Sequelize.DataTypes.STRING,
+	loser_nickname: Sequelize.DataTypes.STRING,
+	loser_points: Sequelize.DataTypes.INTEGER,
+	confirmed: Sequelize.DataTypes.BOOLEAN,
+	game_id: Sequelize.DataTypes.STRING
 });
 
 Matches.destroy({ where: { player0_id: "384240981521858561"}})

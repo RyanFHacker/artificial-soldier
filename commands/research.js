@@ -67,20 +67,40 @@ module.exports = {
           filter,
         });
 
-				collector.on('collect', async i => {
-					if (i.customId === match_id) {
-						// check bounty, so if player 1 has a rank, give extra
-						// get bounties based on game based on losing players rank
-						let bounty = 0
-						if (getWinningSubject.rank < getLosingSubject.rank) {
-							bounty = await BountiesModel.findOne({ where: { position: getLosingSubject.rank, game_id: game.game_id} })
-						}
-						// update match as confirmed
-						if (match) {
-							let match_outcome = await MatchOutcomesModel.findOne({ where: { loser_sets: loser_sets}})
-							match.update({results: `${game.setcount} - ${loser_sets}`,confirmed: true, winner_points: match_outcome.winner_points, loser_points: match_outcome.loser_points, bounty_points: bounty, game_id: game.game_id})
-							await SubjectsModel.increment({research_points: (+match_outcome.winner_points+bounty)}, { where: { subject_id:getWinningSubject.subject_id }});
-							await SubjectsModel.increment({research_points: (+match_outcome.loser_points)}, { where: { subject_id:getLosingSubject.subject_id }});
+        collector.on("collect", async (i) => {
+          if (i.customId === match_id) {
+            // check bounty, so if player 1 has a rank, give extra
+            // get bounties based on game based on losing players rank
+            let bounty = 0;
+            if (getWinningSubject.rank < getLosingSubject.rank) {
+              bounty = await BountiesModel.findOne({
+                where: {
+                  position: getLosingSubject.rank,
+                  game_id: game.game_id,
+                },
+              });
+            }
+            // update match as confirmed
+            if (match) {
+              let match_outcome = await MatchOutcomesModel.findOne({
+                where: { loser_sets: loser_sets },
+              });
+              match.update({
+                results: `${game.setcount} - ${loser_sets}`,
+                confirmed: true,
+                winner_points: match_outcome.winner_points,
+                loser_points: match_outcome.loser_points,
+                bounty_points: bounty,
+                game_id: game.game_id,
+              });
+              await SubjectsModel.increment(
+                { research_points: +match_outcome.winner_points + bounty },
+                { where: { subject_id: getWinningSubject.subject_id } }
+              );
+              await SubjectsModel.increment(
+                { research_points: +match_outcome.loser_points },
+                { where: { subject_id: getLosingSubject.subject_id } }
+              );
 
               return await i.update({
                 content: `Confirmed ${match.winner_nickname} ${match.results} ${match.loser_nickname}`,
@@ -97,34 +117,46 @@ module.exports = {
           }
         });
 
-				// Verify both subjects are registered
-				if (getWinningSubject && getLosingSubject) {
-					// Don't allow a user to enter themselves
-					if ((interaction.user != interaction.options.getUser('opponent') || config.selfPlay)) {
-						const duplicateMatchToday = await MatchesModel.findOne({ where: 
-							{ winner_id: {[Sequelize.Op.or]: [winner.id, loser.id]}, loser_id: {[Sequelize.Op.or]: [winner.id, loser.id]}, createdAt: {[Sequelize.Op.gt]: new Date(new Date() - 24 * 60 * 60 * 1000)}} });
-						if (!duplicateMatchToday || config.duplicates) {
-							// only from 12 PM to 12 AM Wednesday
-							const now = new Date()
-							let noon = new Date()
-							let midnight = new Date();
-		
-							noon.setHours(12,0,0,0);
-							midnight.setDate((midnight.getDate() + 1))
-							midnight.setHours(23,59,59,99)
-							if ((now.getDay() === 3 && now >= noon && now <= midnight) || config.wednesday) {
-							
-								// create match
-								match = await MatchesModel.create({
-									match_id: match_id,
-									results:interaction.options.getString('results'),
-									winner_id: winner.id,
-									winner_nickname: getWinningSubject.nickname,
-									loser_id: loser.id,
-									loser_nickname: getLosingSubject.nickname,
+        // Verify both subjects are registered
+        if (getWinningSubject && getLosingSubject) {
+          // Don't allow a user to enter themselves
+          if (
+            interaction.user != interaction.options.getUser("opponent") ||
+            config.selfPlay
+          ) {
+            const duplicateMatchToday = await MatchesModel.findOne({
+              where: {
+                winner_id: { [Sequelize.Op.or]: [winner.id, loser.id] },
+                loser_id: { [Sequelize.Op.or]: [winner.id, loser.id] },
+                createdAt: {
+                  [Sequelize.Op.gt]: new Date(new Date() - 24 * 60 * 60 * 1000),
+                },
+              },
+            });
+            if (!duplicateMatchToday || config.duplicates) {
+              // only from 12 PM to 12 AM Wednesday
+              const now = new Date();
+              let noon = new Date();
+              let midnight = new Date();
+
+              noon.setHours(12, 0, 0, 0);
+              midnight.setDate(midnight.getDate() + 1);
+              midnight.setHours(23, 59, 59, 99);
+              if (
+                (now.getDay() === 3 && now >= noon && now <= midnight) ||
+                config.wednesday
+              ) {
+                // create match
+                match = await MatchesModel.create({
+                  match_id: match_id,
+                  results: interaction.options.getString("results"),
+                  winner_id: winner.id,
+                  winner_nickname: getWinningSubject.nickname,
+                  loser_id: loser.id,
+                  loser_nickname: getLosingSubject.nickname,
                   game_id: game.game_id,
-									confirmed: false
-								});
+                  confirmed: false,
+                });
 
                 const row = new ActionRowBuilder()
                   .addComponents(

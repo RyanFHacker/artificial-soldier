@@ -83,7 +83,7 @@ module.exports = {
             // update match as confirmed
             if (match) {
               let match_outcome = await MatchOutcomesModel.findOne({
-                where: { loser_sets: loser_sets },
+                where: { game_id: game_id, loser_sets: loser_sets },
               });
               match.update({
                 results: `${game.setcount} - ${loser_sets}`,
@@ -91,15 +91,24 @@ module.exports = {
                 winner_points: match_outcome.winner_points,
                 loser_points: match_outcome.loser_points,
                 bounty_points: bounty,
-                game_id: game.game_id,
               });
               await SubjectsModel.increment(
                 { research_points: +match_outcome.winner_points + bounty },
-                { where: { subject_id: getWinningSubject.subject_id } }
+                {
+                  where: {
+                    subject_id: getWinningSubject.subject_id,
+                    game_id: game_id,
+                  },
+                }
               );
               await SubjectsModel.increment(
                 { research_points: +match_outcome.loser_points },
-                { where: { subject_id: getLosingSubject.subject_id } }
+                {
+                  where: {
+                    subject_id: getLosingSubject.subject_id,
+                    game_id: game_id,
+                  },
+                }
               );
 
               return await i.update({
@@ -128,6 +137,7 @@ module.exports = {
               where: {
                 winner_id: { [Sequelize.Op.or]: [winner.id, loser.id] },
                 loser_id: { [Sequelize.Op.or]: [winner.id, loser.id] },
+                game_id: game_id,
                 createdAt: {
                   [Sequelize.Op.gt]: new Date(new Date() - 24 * 60 * 60 * 1000),
                 },
@@ -154,8 +164,8 @@ module.exports = {
                   winner_nickname: getWinningSubject.nickname,
                   loser_id: loser.id,
                   loser_nickname: getLosingSubject.nickname,
-                  game_id: game.game_id,
                   confirmed: false,
+                  game_id: game.game_id,
                 });
 
                 const row = new ActionRowBuilder()

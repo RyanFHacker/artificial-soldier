@@ -9,9 +9,12 @@
   "author": "Ryan Hacker",
   "license": "ISC",
   "dependencies": {
+    "@apollo/client": "^3.8.2",
     "axios": "^1.2.2",
     "discord.js": "^14.7.1",
     "dotenv": "^16.0.3",
+    "graphql": "^16.8.0",
+    "graphql-request": "^6.1.0",
     "logging": "^3.3.0",
     "sequelize": "^6.28.0",
     "sqlite3": "^5.1.4",

@@ -27,7 +27,8 @@ module.exports = {
         .setRequired(true)
         .addChoices(
           { name: "SF6", value: "sf6" },
-          { name: "GGST", value: "ggst" }
+          { name: "GGST", value: "ggst" },
+          { name: "XRD", value: "xrd" }
         )
     )
     .addUserOption((option) =>
@@ -75,7 +76,7 @@ module.exports = {
             if (getWinningSubject.rank < getLosingSubject.rank) {
               bounty = await BountiesModel.findOne({
                 where: {
-                  position: getLosingSubject.rank,
+                  position_value: getLosingSubject.rank,
                   game_id: game.game_id,
                 },
               });

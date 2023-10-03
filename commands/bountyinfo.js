@@ -15,7 +15,8 @@ module.exports = {
         .setDescription("Select the game in which you would like to register")
         .addChoices(
           { name: "SF6", value: "sf6" },
-          { name: "GGST", value: "ggst" }
+          { name: "GGST", value: "ggst" },
+          { name: "XRD", value: "xrd" }
         )
     ),
   async execute(interaction) {
@@ -32,7 +33,7 @@ module.exports = {
     let scores = "";
 
     bounties.forEach((element) => {
-      scores += `${element.position}   ${element.points} pts\n`;
+      scores += `${element.position_value}      ${element.points} pts\n`;
     });
     scoreboard = [
       scoreboard.slice(0, scoreboard.length - 3),

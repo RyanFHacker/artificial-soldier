@@ -20,7 +20,8 @@ module.exports = {
         .setRequired(true)
         .addChoices(
           { name: "SF6", value: "sf6" },
-          { name: "GGST", value: "ggst" }
+          { name: "GGST", value: "ggst" },
+          { name: "XRD", value: "xrd" }
         )
     ),
   async execute(interaction) {

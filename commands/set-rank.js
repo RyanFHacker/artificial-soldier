@@ -8,7 +8,7 @@ const GamesModel = require("../models/Games");
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("setrank")
+    .setName("set-rank")
     .setDescription(
       "Reset the list of the top ranked players in the combat experiment."
     ),

@@ -5,10 +5,10 @@ const Subjects = require("../models/Subjects");
 const Bounties = require("../models/Bounties");
 const MatchOutcomes = require("../models/MatchOutcomes");
 
-Games
-Matches
-Subjects
-Bounties
-MatchOutcomes
+Games;
+Matches;
+Subjects;
+Bounties;
+MatchOutcomes;
 
-sequelize.sync()
+sequelize.sync();

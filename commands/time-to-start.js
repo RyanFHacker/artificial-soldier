@@ -2,7 +2,7 @@ const { SlashCommandBuilder } = require("discord.js");
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("timetostart")
+    .setName("time-to-start")
     .setDescription("Replies time until next Combat Research event."),
   async execute(interaction) {
     await interaction.deferReply({ ephemeral: true });

@@ -1,24 +1,14 @@
 const { SlashCommandBuilder } = require("discord.js");
-
+const { getGameOptions } = require("../config/common-options.js");
 const MatchOutcomesModel = require("../models/MatchOutcomes");
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("matchinfo")
+    .setName("match-info")
     .setDescription(
       "Display a table outlining the points for the different outcomes of a match."
     )
-    .addStringOption((option) =>
-      option
-        .setName("game")
-        .setRequired(true)
-        .setDescription("Select the game in which you would like to register")
-        .addChoices(
-          { name: "SF6", value: "sf6" },
-          { name: "GGST", value: "ggst" },
-          { name: "XRD", value: "xrd" }
-        )
-    ),
+    .addStringOption(getGameOptions()),
   async execute(interaction) {
     await interaction.deferReply({ ephemeral: true });
     const game_id = interaction.options.getString("game");

@@ -7,9 +7,8 @@ const {
 } = require("discord.js");
 const { v4: uuidv4 } = require("uuid");
 const config = require("../prodConfig.json");
-
+const { getGameOptions } = require("../config/common-options.js");
 const Sequelize = require("sequelize");
-
 const MatchesModel = require("../models/Matches");
 const SubjectsModel = require("../models/Subjects");
 const BountiesModel = require("../models/Bounties");
@@ -20,17 +19,7 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName("research")
     .setDescription("Enter your research match.")
-    .addStringOption((option) =>
-      option
-        .setName("game")
-        .setDescription("Select the game that was played")
-        .setRequired(true)
-        .addChoices(
-          { name: "SF6", value: "sf6" },
-          { name: "GGST", value: "ggst" },
-          { name: "XRD", value: "xrd" }
-        )
-    )
+    .addStringOption(getGameOptions())
     .addUserOption((option) =>
       option
         .setName("opponent")
@@ -80,6 +69,12 @@ module.exports = {
                   game_id: game.game_id,
                 },
               });
+              //if champion bounty
+            } else if (getLosingSubject.champion === true) {
+              console.log(getLosingSubject);
+              console.log(`current bounty:${bounty}`);
+              console.log(`champion bounty:${game.championBounty}`);
+              bounty += game.championBounty;
             }
             // update match as confirmed
             if (match) {

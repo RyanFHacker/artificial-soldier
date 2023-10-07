@@ -7,21 +7,21 @@ const GamesModel = require("../models/Games");
 const BountiesModel = require("../models/Bounties");
 
 async function createBounties() {
-    let games = await GamesModel.findAll()
+  let games = await GamesModel.findAll();
 
-    for (game of games) {
-        let bounty = game.maxBounty
-        for (let i = 0; i < 8; i++){
-            BountiesModel.create({
-                game_id: game.game_id,
-                position_value: i+1,
-                points: bounty
-            });
-            if (i != 4 && i != 6 ) {
-                bounty = bounty - 5
-            }
-        }
+  for (game of games) {
+    let bounty = game.maxBounty;
+    for (let i = 0; i < 8; i++) {
+      BountiesModel.create({
+        game_id: game.game_id,
+        position_value: i + 1,
+        points: bounty,
+      });
+      if (i != 4 && i != 6) {
+        bounty = bounty - 5;
+      }
     }
+  }
 }
 
-createBounties()
+createBounties();

@@ -1,20 +1,17 @@
 const { SlashCommandBuilder } = require("discord.js");
-
+const { getGameOptions } = require("../config/common-options.js");
 const SubjectsModel = require("../models/Subjects");
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("top8")
+    .setName("top-8")
     .setDescription("Display top 8 Subjects")
     .addStringOption((option) =>
       option
         .setName("game")
         .setRequired(true)
         .setDescription("Select the game in which you would like to register")
-        .addChoices(
-          { name: "SF6", value: "sf6" },
-          { name: "GGST", value: "ggst" }
-        )
+        .addChoices(getGameOptions())
     ),
   async execute(interaction) {
     await interaction.deferReply({ ephemeral: true });

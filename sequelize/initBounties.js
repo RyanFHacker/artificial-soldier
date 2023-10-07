@@ -1,128 +1,27 @@
-const Sequelize = require('sequelize');
+//for each game
+//create 8 bounties
+//start 1st place bounty as maxBounty for the game
+//for each subsequent bounty, go down by 5, except for last 4, which only go down by 5 every other rank
 
-const sequelize = new Sequelize('database', 'user', 'password', {
-	host: 'localhost',
-	dialect: 'sqlite',
-	logging: false,
-	// SQLite only
-	storage: 'database.sqlite',
-});
+const GamesModel = require("../models/Games");
+const BountiesModel = require("../models/Bounties");
 
-const Bounties = sequelize.define('bounties', {
-	game_id: Sequelize.STRING,
-    position: Sequelize.STRING,
-    position_value: Sequelize.INTEGER,
-    points: Sequelize.INTEGER
-});
+async function createBounties() {
+  let games = await GamesModel.findAll();
 
-Bounties.create({
-    game_id: "sf6",
-    position: "1st",
-    position_value: 1,
-    points: 30
-});
+  for (game of games) {
+    let bounty = game.maxBounty;
+    for (let i = 0; i < 8; i++) {
+      BountiesModel.create({
+        game_id: game.game_id,
+        position_value: i + 1,
+        points: bounty,
+      });
+      if (i != 4 && i != 6) {
+        bounty = bounty - 5;
+      }
+    }
+  }
+}
 
-Bounties.create({
-    game_id: "sf6",
-    position: "2nd",
-    position_value: 2,
-    points: 25
-});
-
-Bounties.create({
-    game_id: "sf6",
-    position: "3rd",
-    position_value: 3,
-    points: 20
-});
-
-Bounties.create({
-    game_id: "sf6",
-    position: "4th",
-    position_value: 4,
-    points: 15
-});
-
-Bounties.create({
-    game_id: "sf6",
-    position: "5th",
-    position_value: 5,
-    points: 10
-});
-
-Bounties.create({
-    game_id: "sf6",
-    position: "6th",
-    position_value: 6,
-    points: 10
-});
-
-Bounties.create({
-    game_id: "sf6",
-    position: "7th",
-    position_value: 7,
-    points: 5
-});
-
-Bounties.create({
-    game_id: "sf6",
-    position: "8th",
-    position_value: 8,
-    points: 5
-});
-
-Bounties.create({
-    game_id: "ggst",
-    position: "1st",
-    position_value: 1,
-    points: 45
-});
-
-Bounties.create({
-    game_id: "ggst",
-    position: "2nd",
-    position_value: 2,
-    points: 40
-});
-
-Bounties.create({
-    game_id: "ggst",
-    position: "3rd",
-    position_value: 3,
-    points: 35
-});
-
-Bounties.create({
-    game_id: "ggst",
-    position: "4th",
-    position_value: 4,
-    points: 30
-});
-
-Bounties.create({
-    game_id: "ggst",
-    position: "5th",
-    position_value: 5,
-    points: 25
-});
-
-Bounties.create({
-    game_id: "ggst",
-    position: "6th",
-    position_value: 6,
-    points: 25
-});
-
-Bounties.create({
-    game_id: "ggst",
-    position: "7th",
-    position_value: 7,
-    points: 20
-});
-
-Bounties.create({
-    game_id: "ggst",
-    position: "8th",
-    position_value: 8,
-    points: 20
-});
+createBounties();

@@ -9,6 +9,8 @@ const Games = sequelize.define("games", {
   },
   name: Sequelize.TEXT,
   setcount: Sequelize.INTEGER,
+  maxBounty: Sequelize.INTEGER,
+  championBounty: Sequelize.INTEGER,
   enabled: Sequelize.DataTypes.BOOLEAN,
 });
 

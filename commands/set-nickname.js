@@ -1,11 +1,11 @@
 const { SlashCommandBuilder } = require("discord.js");
-
+const { getGameOptions } = require("../config/common-options.js");
 const SubjectsModel = require("../models/Subjects");
 const GamesModel = require("../models/Games");
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("setnickname")
+    .setName("set-nickname")
     .setDescription("Display scoreboard")
     .addStringOption((option) =>
       option
@@ -13,16 +13,7 @@ module.exports = {
         .setRequired(true)
         .setDescription("change nickname")
     )
-    .addStringOption((option) =>
-      option
-        .setName("game")
-        .setDescription("Select the game that was played")
-        .setRequired(true)
-        .addChoices(
-          { name: "SF6", value: "sf6" },
-          { name: "GGST", value: "ggst" }
-        )
-    ),
+    .addStringOption(getGameOptions()),
   async execute(interaction) {
     await interaction.deferReply({ ephemeral: true });
     const subject_id = interaction.user.id;

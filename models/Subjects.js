@@ -10,6 +10,7 @@ const Subjects = sequelize.define("subjects", {
   rank: Sequelize.INTEGER,
   nickname: Sequelize.STRING,
   game_id: Sequelize.STRING,
+  champion: Sequelize.DataTypes.BOOLEAN,
 });
 
 module.exports = Subjects;

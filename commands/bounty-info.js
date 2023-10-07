@@ -1,23 +1,14 @@
 const { SlashCommandBuilder } = require("discord.js");
-
+const { getGameOptions } = require("../config/common-options.js");
 const BountiesModel = require("../models/Bounties");
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("bountyinfo")
+    .setName("bounty-info")
     .setDescription(
       "Display a table outlining the points available when playing a player in the top eight."
     )
-    .addStringOption((option) =>
-      option
-        .setName("game")
-        .setRequired(true)
-        .setDescription("Select the game in which you would like to register")
-        .addChoices(
-          { name: "SF6", value: "sf6" },
-          { name: "GGST", value: "ggst" }
-        )
-    ),
+    .addStringOption(getGameOptions()),
   async execute(interaction) {
     await interaction.deferReply({ ephemeral: true });
     const game_id = interaction.options.getString("game");
@@ -32,7 +23,7 @@ module.exports = {
     let scores = "";
 
     bounties.forEach((element) => {
-      scores += `${element.position}   ${element.points} pts\n`;
+      scores += `${element.position_value}      ${element.points} pts\n`;
     });
     scoreboard = [
       scoreboard.slice(0, scoreboard.length - 3),

@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, PermissionFlagsBits } = require("discord.js");
-
+const { getGameOptions } = require("../config/common-options.js");
 const SubjectsModel = require("../models/Subjects");
 
 module.exports = {
@@ -7,12 +7,7 @@ module.exports = {
     .setName("register")
     .setDescription("Add yourself to the Combat Research Institue roster.")
     .setDefaultMemberPermissions(PermissionFlagsBits.ViewChannel)
-    .addStringOption((option) =>
-      option
-        .setName("nickname")
-        .setRequired(true)
-        .setDescription("change nickname")
-    )
+    .addStringOption(getGameOptions())
     .addStringOption((option) =>
       option
         .setName("game")
@@ -20,7 +15,8 @@ module.exports = {
         .setDescription("Select the game in which you would like to register")
         .addChoices(
           { name: "SF6", value: "sf6" },
-          { name: "GGST", value: "ggst" }
+          { name: "GGST", value: "ggst" },
+          { name: "XRD", value: "xrd" }
         )
     ),
   async execute(interaction) {

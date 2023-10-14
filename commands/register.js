@@ -7,18 +7,13 @@ module.exports = {
     .setName("register")
     .setDescription("Add yourself to the Combat Research Institue roster.")
     .setDefaultMemberPermissions(PermissionFlagsBits.ViewChannel)
-    .addStringOption(getGameOptions())
     .addStringOption((option) =>
       option
-        .setName("game")
+        .setName("nickname")
+        .setDescription("Nickname for this game")
         .setRequired(true)
-        .setDescription("Select the game in which you would like to register")
-        .addChoices(
-          { name: "SF6", value: "sf6" },
-          { name: "GGST", value: "ggst" },
-          { name: "XRD", value: "xrd" }
-        )
-    ),
+    )
+    .addStringOption(getGameOptions()),
   async execute(interaction) {
     await interaction.deferReply({ ephemeral: true });
     try {

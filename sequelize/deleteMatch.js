@@ -26,4 +26,4 @@ const Matches = sequelize.define("matches", {
   game_id: Sequelize.DataTypes.STRING,
 });
 
-Matches.destroy({ where: { player0_id: "384240981521858561" } });
+Matches.destroy({ where: { game_id: "test", confirmed: false } });

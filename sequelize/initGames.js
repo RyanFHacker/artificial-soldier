@@ -25,6 +25,13 @@ let games = [
     maxBounty: 45,
     enabled: true,
   },
+  {
+    game_id: "test",
+    name: "test",
+    setcount: 3,
+    maxBounty: 30,
+    enabled: true,
+  },
 ];
 
 async function createGames() {
@@ -157,5 +164,29 @@ MatchOutcomes.create({
   winner_sets: 5,
   loser_sets: 0,
   winner_points: 30,
+  loser_points: 5,
+});
+
+MatchOutcomes.create({
+  game_id: "test",
+  winner_sets: 3,
+  loser_sets: 2,
+  winner_points: 20,
+  loser_points: 15,
+});
+
+MatchOutcomes.create({
+  game_id: "test",
+  winner_sets: 3,
+  loser_sets: 1,
+  winner_points: 20,
+  loser_points: 10,
+});
+
+MatchOutcomes.create({
+  game_id: "test",
+  winner_sets: 3,
+  loser_sets: 0,
+  winner_points: 20,
   loser_points: 5,
 });

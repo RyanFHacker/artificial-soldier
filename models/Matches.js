@@ -7,6 +7,7 @@ const Matches = sequelize.define("matches", {
     type: Sequelize.STRING,
     primaryKey: true,
   },
+  deny_id: Sequelize.STRING,
   results: Sequelize.TEXT,
   winner_id: Sequelize.DataTypes.STRING,
   winner_nickname: Sequelize.DataTypes.STRING,

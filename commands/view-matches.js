@@ -8,11 +8,21 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName("view-matches")
     .setDescription("Check all your matches in the current competition.")
-    .addStringOption(getGameOptions()),
+    .addStringOption(getGameOptions())
+    .addUserOption((option) =>
+      option
+        .setName("subject")
+        .setDescription("View another player's matches")
+    ),
   async execute(interaction) {
     await interaction.deferReply({ ephemeral: true });
-    const subject = interaction.user;
     const game_id = interaction.options.getString("game");
+    let subject
+    if (interaction.options.getUser("subject")){
+      subject = interaction.options.getUser("subject")
+    } else {
+      subject = interaction.user;
+    }
     const getSubject = await SubjectsModel.findOne({
       where: { subject_id: subject.id, game_id: game_id },
     });

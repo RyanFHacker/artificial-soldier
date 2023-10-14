@@ -8,7 +8,10 @@ module.exports = {
     .setDescription("Add yourself to the Combat Research Institue roster.")
     .setDefaultMemberPermissions(PermissionFlagsBits.ViewChannel)
     .addStringOption((option) =>
-      option.setName("nickname").setDescription("Nickname for this game")
+      option
+        .setName("nickname")
+        .setDescription("Nickname for this game")
+        .setRequired(true)
     )
     .addStringOption(getGameOptions()),
   async execute(interaction) {

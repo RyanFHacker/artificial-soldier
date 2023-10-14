@@ -31,8 +31,7 @@ module.exports = {
         .setName("loser_sets")
         .setDescription("Sets won by loser")
         .setRequired(true)
-    )
-    .setDefaultMemberPermissions(PermissionFlagsBits.ViewChannel),
+    ),
   async execute(interaction) {
     await interaction.deferReply({ content: "Loading!" });
     try {

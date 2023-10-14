@@ -6,13 +6,7 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName("top-8")
     .setDescription("Display top 8 Subjects")
-    .addStringOption((option) =>
-      option
-        .setName("game")
-        .setRequired(true)
-        .setDescription("Select the game in which you would like to register")
-        .addChoices(getGameOptions())
-    ),
+    .addStringOption(getGameOptions()),
   async execute(interaction) {
     await interaction.deferReply({ ephemeral: true });
     // Get a list of all subjects by score

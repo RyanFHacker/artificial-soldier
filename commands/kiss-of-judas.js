@@ -66,7 +66,7 @@ module.exports = {
     } catch {
       console.error(error);
       return await interaction.editReply({
-        content: "There was an error while executing this command! research",
+        content: "There was an error while executing this command! kiss-of-judas",
       });
     }
   },

@@ -47,7 +47,8 @@ client.once(Events.ClientReady, () => {
 client.on(Events.InteractionCreate, async (interaction) => {
   if (
     !interaction.isChatInputCommand() ||
-    interaction.channelId != config.channelId
+    interaction.channelId != config.channelId &&
+    interaction.channelId != config.testChannelId
   )
     return;
 

@@ -7,7 +7,7 @@ const {
 } = require("discord.js");
 const { v4: uuidv4 } = require("uuid");
 const config = require("../prodConfig.json");
-const { getGameOptions } = require("../config/common-options.js");
+const { getGameOptions, confirmMatch } = require("../config/common-options.js");
 const Sequelize = require("sequelize");
 const MatchesModel = require("../models/Matches");
 const SubjectsModel = require("../models/Subjects");
@@ -40,15 +40,17 @@ module.exports = {
       const loser = interaction.options.getUser("opponent");
       const game_id = interaction.options.getString("game");
       const game = await GamesModel.findOne({ where: { game_id: game_id } });
-      const getWinningSubject = await SubjectsModel.findOne({
-        where: { subject_id: winner.id, game_id: game_id },
-      });
-      const getLosingSubject = await SubjectsModel.findOne({
-        where: { subject_id: loser.id, game_id },
-      });
       const loser_sets = interaction.options.getInteger("loser_sets");
+      let response = ``
+      let components = []
 
       if (loser_sets <= game.setcount - 1) {
+        const winningSubject = await SubjectsModel.findOne({
+          where: { subject_id: winner.id, game_id: game_id },
+        });
+        const losingSubject = await SubjectsModel.findOne({
+          where: { subject_id: loser.id, game_id },
+        });
         const match_id = uuidv4();
         const deny_id = uuidv4();
 
@@ -59,54 +61,14 @@ module.exports = {
 
         collector.on("collect", async (i) => {
           if (i.customId === match_id) {
-            // check bounty, so if player 1 has a rank, give extra
-            // get bounties based on game based on losing players rank
-            let bounty = 0;
-            if (getWinningSubject.rank < getLosingSubject.rank) {
-              bounty = await BountiesModel.findOne({
-                where: {
-                  position_value: getLosingSubject.rank,
-                  game_id: game.game_id,
-                },
-              });
-              //if champion bounty
-            } else if (getLosingSubject.champion === true) {
-              console.log(getLosingSubject);
-              console.log(`current bounty:${bounty}`);
-              console.log(`champion bounty:${game.championBounty}`);
-              bounty += game.championBounty;
-            }
             // update match as confirmed
+            const match = await MatchesModel.findOne({
+              where: {
+                match_id: match_id
+              },
+            });
             if (match) {
-              let match_outcome = await MatchOutcomesModel.findOne({
-                where: { game_id: game_id, loser_sets: loser_sets },
-              });
-              match.update({
-                results: `${game.setcount} - ${loser_sets}`,
-                confirmed: true,
-                winner_points: match_outcome.winner_points,
-                loser_points: match_outcome.loser_points,
-                bounty_points: bounty,
-              });
-              await SubjectsModel.increment(
-                { research_points: +match_outcome.winner_points + bounty },
-                {
-                  where: {
-                    subject_id: getWinningSubject.subject_id,
-                    game_id: game_id,
-                  },
-                }
-              );
-              await SubjectsModel.increment(
-                { research_points: +match_outcome.loser_points },
-                {
-                  where: {
-                    subject_id: getLosingSubject.subject_id,
-                    game_id: game_id,
-                  },
-                }
-              );
-
+              confirmMatch(i.customId)
               return await i.update({
                 content: `Confirmed ${match.winner_nickname} ${match.results} ${match.loser_nickname}`,
                 components: [],
@@ -114,7 +76,7 @@ module.exports = {
             }
           } else if (i.customId === deny_id) {
             //remove the match
-            MatchesModel.destroy({ where: { match_id: match_id } });
+            MatchesModel.destroy({ where: { deny_id: deny_id } });
             return await i.update({
               content: `Denied ${match.winner_nickname} ${match.results} ${match.loser_nickname}`,
               components: [],
@@ -123,7 +85,7 @@ module.exports = {
         });
 
         // Verify both subjects are registered
-        if (getWinningSubject && getLosingSubject) {
+        if (winningSubject && losingSubject) {
           // Don't allow a user to enter themselves
           if (
             interaction.user != interaction.options.getUser("opponent") ||
@@ -152,16 +114,39 @@ module.exports = {
                 (now.getDay() === 3 && now >= noon && now <= midnight) ||
                 config.wednesday
               ) {
+                let match_outcome = await MatchOutcomesModel.findOne({
+                  where: { game_id: game_id, loser_sets: loser_sets },
+                });
+                // check bounty, so if loser has a rank, give extra
+                // get bounties based on game based on losing players rank
+                // if loser has a rank and the winner has 
+                let bounty_points = 0
+                if ((losingSubject.rank) && (winningSubject.rank) && winningSubject.rank > losingSubject.rank) {
+                  bounty = await BountiesModel.findOne({
+                    where: {
+                      position_value: losingSubject.rank,
+                      game_id: game.game_id,
+                    },
+                  });
+                  bounty_points += bounty.points
+                  //if champion bounty
+                } else if (losingSubject.champion === true) {
+                  bounty_points += game.championBounty;
+                }
                 // create match
                 match = await MatchesModel.create({
                   match_id: match_id,
-                  results: interaction.options.getString("results"),
+                  deny_id: deny_id,
+                  results: `${match_outcome.winner_sets}-${match_outcome.loser_sets}`,
                   winner_id: winner.id,
-                  winner_nickname: getWinningSubject.nickname,
+                  winner_nickname: winningSubject.nickname,
+                  winner_points: match_outcome.winner_points,
                   loser_id: loser.id,
-                  loser_nickname: getLosingSubject.nickname,
+                  loser_nickname: losingSubject.nickname,
+                  loser_points: match_outcome.loser_points,
                   confirmed: false,
                   game_id: game.game_id,
+                  bounty_points: bounty_points
                 });
 
                 const row = new ActionRowBuilder()
@@ -177,41 +162,29 @@ module.exports = {
                       .setLabel("Deny")
                       .setStyle(ButtonStyle.Secondary)
                   );
-
-                return await interaction.editReply({
-                  content: `Match between ${match.winner_nickname} and ${match.loser_nickname} added with the result of ${game.setcount} - ${loser_sets}.`,
-                  components: [row],
-                });
+                response = `Match between ${match.winner_nickname} and ${match.loser_nickname} added with the result of ${game.setcount} - ${loser_sets}.`
+                components = [row]
               } else {
-                return await interaction.editReply({
-                  content: `You have attempted to submit a match outside of the desginated day or hours!`,
-                });
+                response = `You have attempted to submit a match outside of the desginated day or hours!`
               }
             } else {
-              return await interaction.editReply({
-                content: `This appears to be a duplicate match`,
-              });
+              response = `This appears to be a duplicate match`
             }
           } else {
-            return await interaction.editReply({
-              content: `You can't claim a match against yourself`,
-            });
+            response = `You can't claim a match against yourself`
           }
-        } else if (!getWinningSubject) {
-          return await interaction.editReply({
-            content: `You are not registered for this game, please do so with the /register command`,
-          });
-        } else if (!getLosingSubject) {
-          return await interaction.editReply({
-            content:
-              "Your opponent is not registered for this game, please have them do so with the /register command",
-          });
+        } else if (!winningSubject) {
+          response = `You are not registered for this game, please do so with the /register command`
+        } else if (!losingSubject) {
+          response = `Your opponent is not registered for this game, please have them do so with the /register command`
         }
       } else {
-        return await interaction.editReply({
-          content: `Loser set count surpasses what is possible in a First to ${game.setcount} set`,
-        });
+        response = `Loser set count surpasses what is possible in a First to ${game.setcount} set`
       }
+      return await interaction.editReply({
+        content: response,
+        components: components
+      });
     } catch (error) {
       console.error(error);
       return await interaction.editReply({

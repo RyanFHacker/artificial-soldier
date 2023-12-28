@@ -29,6 +29,7 @@ module.exports = {
           research_points: 0,
           nickname: nickname,
           game_id: game_id,
+          rank: "",
         });
         return await interaction.editReply({
           content: `Registered ${interaction.user} as ${nickname} for ${game_id}`,

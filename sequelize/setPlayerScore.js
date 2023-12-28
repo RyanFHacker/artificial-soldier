@@ -1,5 +1,6 @@
 const Sequelize = require("sequelize");
 const sequelize = require("../config/database");
+const { v4: uuidv4 } = require("uuid");
 
 const SubjectsModel = require("../models/Subjects");
 const MatchesModel = require("../models/Matches");
@@ -50,7 +51,7 @@ const Games = require("../models/Games");
 // MatchesModel.update({ results:"5 - 0", winner_points: 30, loser_points: 5, bounty_points: 0, confirmed: true}, { where: { match_id: "2348043a-aa48-4ac0-b5c0-4e9880330095" }})
 // Volume 5 - 0 Nano
 // 988fa8d4-a4e0-49bf-bfb1-e8b14d26ffd9
-MatchesModel.update({ results:"5 - 0", winner_id: "120364586535747584", winner_nickname: "Volume",winner_points: 30, loser_id: "105082222784028672", loser_nickname: "Nano", loser_points: 5, bounty_points: 0, confirmed: true, game_id: 'ggst'}, { where: { match_id: "bc99ed81-c6f9-45a6-9607-4ba0c30a19c0" }})
+// MatchesModel.update({ results:"5 - 0", winner_id: "120364586535747584", winner_nickname: "Volume",winner_points: 30, loser_id: "105082222784028672", loser_nickname: "Nano", loser_points: 5, bounty_points: 0, confirmed: true, game_id: 'ggst'}, { where: { match_id: "bc99ed81-c6f9-45a6-9607-4ba0c30a19c0" }})
 
 //Scuff1e matches
 // Scuff1e 5 - 0 Nano, no bounty
@@ -80,6 +81,39 @@ MatchesModel.update({ results:"5 - 0", winner_id: "120364586535747584", winner_n
 // MatchesModel.update({ results:"5 - 1", winner_points:30, loser_points: 10, bounty_points: 0, confirmed: true}, { where: { match_id: "45f8819c-54a4-4c62-a598-00d4cbb5925a" }})
 // // Complex 5 - 0 Judas, no bounty
 // MatchesModel.update({ results:"5 - 0", winner_points:30, loser_points: 5, bounty_points: 0, confirmed: true}, { where: { match_id: "4a984290-02d7-46f5-92de-25e6bc9f8381" }})
+
+// Moldysama 3 - 2 DukePhfyliss, 8th place bounty (5pts)
+// MatchesModel.update(
+//   {
+//     winner_id: "608518023309033498",
+//     winner_nickname: "Moldysama",
+//     loser_id: "487077479421575171",
+//     loser_nickname: "DukePhfyliss",
+//     bounty_points: 5,
+//     confirmed: true,
+//     game_id: "sf6",
+//   },
+//   { where: { match_id: "d5ec9f42-2416-4147-aa05-c457f90c73ea" } }
+// );
+// const match_id = uuidv4();
+// Complex 5 - 2 BRX, no bounty
+// MatchesModel.create(
+//   {
+//     match_id: match_id,
+//     results: "5-2",
+//     winner_points: 30,
+//     winner_id: "235224381788389376",
+//     winner_nickname: "ComplexStupidity",
+//     loser_points: 15,
+//     loser_nickname: "BRX",
+//     loser_id: "292377709533986816",
+//     bounty_points: 0,
+//     confirmed: true,
+//     game_id: "ggst",
+//   }
+// );
+
+MatchesModel.update({ bounty_points: 30}, { where: { match_id: "c2b0a0b6-cd87-445c-899a-07d9a132240d" }})
 
 async function checkScore(playerId, game_id) {
   const wins = await MatchesModel.findAll({
@@ -133,6 +167,8 @@ async function setScores() {
   });
 }
 setScores();
+
+
 
 // Remove a match
 // MatchesModel.destroy({

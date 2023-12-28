@@ -53,7 +53,7 @@ module.exports = {
         const match_id = uuidv4();
         const deny_id = uuidv4();
 
-        const filter = (i) => i.user.id === loser.id;
+        const filter = (i) => i.user.id === loser.id || config.test === true;
         const collector = interaction.channel.createMessageComponentCollector({
           filter,
         });
@@ -120,7 +120,7 @@ module.exports = {
                 // get bounties based on game based on losing players rank
                 // if loser has a rank and the winner has 
                 let bounty_points = 0
-                if ((losingSubject.rank) && (winningSubject.rank) && winningSubject.rank > losingSubject.rank) {
+                if ((losingSubject.rank) && (winningSubject.rank > losingSubject.rank) || winningSubject.rank == null) {
                   bounty = await BountiesModel.findOne({
                     where: {
                       position_value: losingSubject.rank,
@@ -152,13 +152,13 @@ module.exports = {
                   .addComponents(
                     new ButtonBuilder()
                       .setCustomId(match_id)
-                      .setLabel("Confirm")
+                      .setLabel(`Confirm`)
                       .setStyle(ButtonStyle.Success)
                   )
                   .addComponents(
                     new ButtonBuilder()
                       .setCustomId(deny_id)
-                      .setLabel("Deny")
+                      .setLabel(`Deny`)
                       .setStyle(ButtonStyle.Secondary)
                   );
                 response = `Match between ${match.winner_nickname} and ${match.loser_nickname} added with the result of ${game.setcount} - ${loser_sets}.`

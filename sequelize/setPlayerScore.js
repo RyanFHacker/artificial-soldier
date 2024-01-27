@@ -50,7 +50,7 @@ const Games = require("../models/Games");
 // MatchesModel.update({ results:"5 - 0", winner_points: 30, loser_points: 5, bounty_points: 0, confirmed: true}, { where: { match_id: "2348043a-aa48-4ac0-b5c0-4e9880330095" }})
 // Volume 5 - 0 Nano
 // 988fa8d4-a4e0-49bf-bfb1-e8b14d26ffd9
-MatchesModel.update({ results:"5 - 0", winner_id: "120364586535747584", winner_nickname: "Volume",winner_points: 30, loser_id: "105082222784028672", loser_nickname: "Nano", loser_points: 5, bounty_points: 0, confirmed: true, game_id: 'ggst'}, { where: { match_id: "bc99ed81-c6f9-45a6-9607-4ba0c30a19c0" }})
+// MatchesModel.update({ results:"5 - 0", winner_id: "120364586535747584", winner_nickname: "Volume",winner_points: 30, loser_id: "105082222784028672", loser_nickname: "Nano", loser_points: 5, bounty_points: 0, confirmed: true, game_id: 'ggst'}, { where: { match_id: "bc99ed81-c6f9-45a6-9607-4ba0c30a19c0" }})
 
 //Scuff1e matches
 // Scuff1e 5 - 0 Nano, no bounty
@@ -80,6 +80,7 @@ MatchesModel.update({ results:"5 - 0", winner_id: "120364586535747584", winner_n
 // MatchesModel.update({ results:"5 - 1", winner_points:30, loser_points: 10, bounty_points: 0, confirmed: true}, { where: { match_id: "45f8819c-54a4-4c62-a598-00d4cbb5925a" }})
 // // Complex 5 - 0 Judas, no bounty
 // MatchesModel.update({ results:"5 - 0", winner_points:30, loser_points: 5, bounty_points: 0, confirmed: true}, { where: { match_id: "4a984290-02d7-46f5-92de-25e6bc9f8381" }})
+MatchesModel.update({ bounty_points: 25 },{ where: { match_id:"9cfaf182-0199-402a-a4c3-dc9f84e14662" } })
 
 async function checkScore(playerId, game_id) {
   const wins = await MatchesModel.findAll({
@@ -140,7 +141,7 @@ setScores();
 // });
 
 // Update set count
-// MatchesModel.update({ results: "5 - 3", loser_points: 20 },{ where: { match_id:"2582f66f-f888-4dca-9c75-a3e2004ed058" } })
+// MatchesModel.update({ results: "3 - 0", loser_points: 5, bounty_points: 25 },{ where: { match_id:"9cfaf182-0199-402a-a4c3-dc9f84e14662" } })
 
 // GGST Complex 80pts
 // SubjectsModel.update(

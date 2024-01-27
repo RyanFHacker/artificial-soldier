@@ -81,6 +81,7 @@ const Games = require("../models/Games");
 // MatchesModel.update({ results:"5 - 1", winner_points:30, loser_points: 10, bounty_points: 0, confirmed: true}, { where: { match_id: "45f8819c-54a4-4c62-a598-00d4cbb5925a" }})
 // // Complex 5 - 0 Judas, no bounty
 // MatchesModel.update({ results:"5 - 0", winner_points:30, loser_points: 5, bounty_points: 0, confirmed: true}, { where: { match_id: "4a984290-02d7-46f5-92de-25e6bc9f8381" }})
+MatchesModel.update({ bounty_points: 25 },{ where: { match_id:"9cfaf182-0199-402a-a4c3-dc9f84e14662" } })
 
 // Moldysama 3 - 2 DukePhfyliss, 8th place bounty (5pts)
 // MatchesModel.update(
@@ -176,7 +177,7 @@ setScores();
 // });
 
 // Update set count
-// MatchesModel.update({ results: "5 - 3", loser_points: 20 },{ where: { match_id:"2582f66f-f888-4dca-9c75-a3e2004ed058" } })
+// MatchesModel.update({ results: "3 - 0", loser_points: 5, bounty_points: 25 },{ where: { match_id:"9cfaf182-0199-402a-a4c3-dc9f84e14662" } })
 
 // GGST Complex 80pts
 // SubjectsModel.update(

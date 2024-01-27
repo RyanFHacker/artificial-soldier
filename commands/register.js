@@ -1,6 +1,13 @@
-const { SlashCommandBuilder, PermissionFlagsBits } = require("discord.js");
+const {
+  SlashCommandBuilder,
+  PermissionFlagsBits,
+  Client,
+  GatewayIntentBits,
+  IntentsBitField,
+} = require("discord.js");
 const { getGameOptions } = require("../config/common-options.js");
 const SubjectsModel = require("../models/Subjects");
+const { testChannelId, token } = require("../prodConfig.json");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -23,6 +30,7 @@ module.exports = {
       const getSubject = await SubjectsModel.findOne({
         where: { subject_id: subject_id, game_id: game_id },
       });
+
       if (!getSubject) {
         await SubjectsModel.create({
           subject_id: subject_id,
@@ -30,6 +38,23 @@ module.exports = {
           nickname: nickname,
           game_id: game_id,
           rank: "",
+        });
+
+        // Send create message in channel
+        const client = new Client({
+          intents: [
+            GatewayIntentBits.MessageContent,
+            IntentsBitField.Flags.Guilds,
+            GatewayIntentBits.GuildMembers,
+          ],
+        });
+        await client.login(token);
+
+        client.on("ready", (client) => {
+          const channel = client.channels.cache.get(testChannelId);
+          channel.send(
+            `Registered ${interaction.user} as ${nickname} for ${game_id}`
+          );
         });
         return await interaction.editReply({
           content: `Registered ${interaction.user} as ${nickname} for ${game_id}`,

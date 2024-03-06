@@ -12,6 +12,7 @@ const Games = sequelize.define("games", {
   maxBounty: Sequelize.INTEGER,
   championBounty: Sequelize.INTEGER,
   enabled: Sequelize.DataTypes.BOOLEAN,
+  event_id: Sequelize.DataTypes.STRING,
 });
 
 module.exports = Games;

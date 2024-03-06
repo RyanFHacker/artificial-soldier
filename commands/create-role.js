@@ -9,18 +9,6 @@ const {
   Colors,
 } = require("discord.js");
 const { dadminId, guildId, token } = require("../prodConfig.json");
-// const client = new Client({
-//     intents: [
-//       GatewayIntentBits.Guilds,
-//       GatewayIntentBits.GuildMessages,
-//       GatewayIntentBits.MessageContent,
-//       IntentsBitField.Flags.Guilds,
-//       GatewayIntentBits.GuildMembers,
-//     ],
-//   });
-
-// const guild = new Guild(client, guildId);
-// const roleManager = new RoleManager(guild)
 
 module.exports = {
   data: new SlashCommandBuilder()

@@ -18,6 +18,7 @@ const Matches = sequelize.define("matches", {
   loser_points: Sequelize.DataTypes.INTEGER,
   confirmed: Sequelize.DataTypes.BOOLEAN,
   game_id: Sequelize.DataTypes.STRING,
+  event_id: Sequelize.DataTypes.STRING,
 });
 
 module.exports = Matches;

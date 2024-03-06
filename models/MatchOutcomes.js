@@ -14,6 +14,7 @@ const MatchOutcomes = sequelize.define(
     loser_sets: Sequelize.INTEGER,
     winner_points: Sequelize.INTEGER,
     loser_points: Sequelize.INTEGER,
+    event_id: Sequelize.DataTypes.STRING,
   },
   {
     timestamps: false,

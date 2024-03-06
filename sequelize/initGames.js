@@ -11,23 +11,8 @@ let games = [
     enabled: true,
   },
   {
-    game_id: "ggst",
-    name: "Guilty Gear: Strive",
-    setcount: 5,
-    maxBounty: 45,
-    championBounty: 15,
-    enabled: true,
-  },
-  {
-    game_id: "gb",
-    name: "Granblue Fantasy Versus: Rising",
-    setcount: 3,
-    maxBounty: 30,
-    enabled: true,
-  },
-  {
-    game_id: "test",
-    name: "test",
+    game_id: "t8",
+    name: "Tekken 8",
     setcount: 3,
     maxBounty: 30,
     enabled: true,
@@ -64,46 +49,6 @@ createGames();
 createBounties();
 
 MatchOutcomes.create({
-  game_id: "ggst",
-  winner_sets: 5,
-  loser_sets: 4,
-  winner_points: 30,
-  loser_points: 25,
-});
-
-MatchOutcomes.create({
-  game_id: "ggst",
-  winner_sets: 5,
-  loser_sets: 3,
-  winner_points: 30,
-  loser_points: 20,
-});
-
-MatchOutcomes.create({
-  game_id: "ggst",
-  winner_sets: 5,
-  loser_sets: 2,
-  winner_points: 30,
-  loser_points: 15,
-});
-
-MatchOutcomes.create({
-  game_id: "ggst",
-  winner_sets: 5,
-  loser_sets: 1,
-  winner_points: 30,
-  loser_points: 10,
-});
-
-MatchOutcomes.create({
-  game_id: "ggst",
-  winner_sets: 5,
-  loser_sets: 0,
-  winner_points: 30,
-  loser_points: 5,
-});
-
-MatchOutcomes.create({
   game_id: "sf6",
   winner_sets: 3,
   loser_sets: 2,
@@ -128,7 +73,7 @@ MatchOutcomes.create({
 });
 
 MatchOutcomes.create({
-  game_id: "gb",
+  game_id: "t8",
   winner_sets: 3,
   loser_sets: 2,
   winner_points: 20,
@@ -136,7 +81,7 @@ MatchOutcomes.create({
 });
 
 MatchOutcomes.create({
-  game_id: "gb",
+  game_id: "t8",
   winner_sets: 3,
   loser_sets: 1,
   winner_points: 20,
@@ -144,31 +89,7 @@ MatchOutcomes.create({
 });
 
 MatchOutcomes.create({
-  game_id: "gb",
-  winner_sets: 3,
-  loser_sets: 0,
-  winner_points: 20,
-  loser_points: 5,
-});
-
-MatchOutcomes.create({
-  game_id: "test",
-  winner_sets: 3,
-  loser_sets: 2,
-  winner_points: 20,
-  loser_points: 15,
-});
-
-MatchOutcomes.create({
-  game_id: "test",
-  winner_sets: 3,
-  loser_sets: 1,
-  winner_points: 20,
-  loser_points: 10,
-});
-
-MatchOutcomes.create({
-  game_id: "test",
+  game_id: "t8",
   winner_sets: 3,
   loser_sets: 0,
   winner_points: 20,

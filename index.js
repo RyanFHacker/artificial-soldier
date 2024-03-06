@@ -1,6 +1,7 @@
 const config = require("./prodConfig.json");
 const fs = require("node:fs");
 const path = require("node:path");
+const { CronJob } = require("cron");
 
 const {
   Client,
@@ -8,6 +9,7 @@ const {
   Collection,
   Events,
   IntentsBitField,
+  Partials,
 } = require("discord.js");
 
 const client = new Client({
@@ -18,7 +20,31 @@ const client = new Client({
     IntentsBitField.Flags.Guilds,
     GatewayIntentBits.GuildMembers,
   ],
+  partials: [Partials.Message, Partials.Channel, Partials.Reaction],
 });
+
+const jobsPath = path.join(__dirname, "jobs");
+const jobsFiles = fs
+  .readdirSync(jobsPath)
+  .filter((file) => file.endsWith(".js"));
+
+for (const file of jobsFiles) {
+  const filePath = path.join(jobsPath, file);
+  const job = require(filePath);
+  if ("cronTime" in job) {
+    new CronJob(
+      job.cronTime,
+      job.onTick,
+      job.onComplete,
+      job.start,
+      job.timeZone
+    );
+  } else {
+    console.log(
+      `[WARNING] The job at ${filePath} is missing a required "data" property.`
+    );
+  }
+}
 
 client.commands = new Collection();
 
@@ -45,12 +71,9 @@ client.once(Events.ClientReady, () => {
 });
 
 client.on(Events.InteractionCreate, async (interaction) => {
-  if (
-    !interaction.isChatInputCommand() ||
-    interaction.channelId != config.channelId &&
-    interaction.channelId != config.testChannelId
-  )
+  if (!interaction.isChatInputCommand()) {
     return;
+  }
 
   const command = interaction.client.commands.get(interaction.commandName);
 
@@ -71,6 +94,10 @@ client.on(Events.InteractionCreate, async (interaction) => {
       ephemeral: true,
     });
   }
+});
+
+client.on(Events.MessageReactionAdd, async (reaction, user) => {
+  console.log("React")
 });
 
 process.on("unhandledRejection", (error) => {

@@ -2,15 +2,15 @@ const Games = require("../models/Games");
 const MatchOutcomes = require("../models/MatchOutcomes");
 const Bounties = require("../models/Bounties");
 
-let games = [
-    {
-      game_id: "test",
-      name: "test",
-      setcount: 3,
-      maxBounty: 30,
-      enabled: true,
-    },
-  ];
+// let games = [
+//     {
+//       game_id: "test",
+//       name: "test",
+//       setcount: 3,
+//       maxBounty: 30,
+//       enabled: true,
+//     },
+//   ];
 
   
 async function createGames() {
@@ -42,26 +42,26 @@ async function createGames() {
   createGames();
   createBounties();
 
-  MatchOutcomes.create({
-    game_id: "test",
-    winner_sets: 3,
-    loser_sets: 2,
-    winner_points: 20,
-    loser_points: 15,
-  });
+  // MatchOutcomes.create({
+  //   game_id: "test",
+  //   winner_sets: 3,
+  //   loser_sets: 2,
+  //   winner_points: 20,
+  //   loser_points: 15,
+  // });
   
-  MatchOutcomes.create({
-    game_id: "test",
-    winner_sets: 3,
-    loser_sets: 1,
-    winner_points: 20,
-    loser_points: 10,
-  });
+  // MatchOutcomes.create({
+  //   game_id: "test",
+  //   winner_sets: 3,
+  //   loser_sets: 1,
+  //   winner_points: 20,
+  //   loser_points: 10,
+  // });
   
-  MatchOutcomes.create({
-    game_id: "test",
-    winner_sets: 3,
-    loser_sets: 0,
-    winner_points: 20,
-    loser_points: 5,
-  });
+  // MatchOutcomes.create({
+  //   game_id: "test",
+  //   winner_sets: 3,
+  //   loser_sets: 0,
+  //   winner_points: 20,
+  //   loser_points: 5,
+  // });
